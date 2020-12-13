@@ -1,0 +1,98 @@
+<%- include('include/head', head) -%>
+
+<body>
+	<%- include('include/header') -%>
+	<%- include('include/left', left) -%>
+
+	<script src="/js/main.js" data-load="talent.js"></script>
+
+	<div id="centr">
+		<div class="main">
+			<h1>魔兽世界 燃烧的远征 <i></i> 天赋模拟器</h1>
+			<nav class="icons select">
+				<h3>请选择职业:</h3>
+				<a href="/talent/#druid" class="druid">
+					<img src="/img/class/druid.jpg" alt="德鲁伊">
+					德鲁伊
+				</a>
+				<a href="/talent/#hunter" class="hunter">
+					<img src="/img/class/hunter.jpg" alt="猎人">
+					猎人
+				</a>
+				<a href="/talent/#mage" class="mage">
+					<img src="/img/class/mage.jpg" alt="法师">
+					法师
+				</a>
+				<a href="/talent/#paladin" class="paladin">
+					<img src="/img/class/paladin.jpg" alt="圣骑士">
+					圣骑士
+				</a>
+				<a href="/talent/#priest" class="priest">
+					<img src="/img/class/priest.jpg" alt="牧师">
+					牧师
+				</a>
+				<a href="/talent/#rogue" class="rogue">
+					<img src="/img/class/rogue.jpg" alt="潜行者">
+					潜行者
+				</a>
+				<a href="/talent/#shaman" class="shaman">
+					<img src="/img/class/shaman.jpg" alt="萨满祭司">
+					萨满祭司
+				</a>
+				<a href="/talent/#warlock" class="warlock">
+					<img src="/img/class/warlock.jpg" alt="术士">
+					术士
+				</a>
+				<a href="/talent/#warrior" class="warrior">
+					<img src="/img/class/warrior.jpg" alt="战士">
+					战士
+				</a>
+			</nav>
+			<ol id="talent">
+				<li>
+					<h4>
+						<i class="icon"><img src="/img/null.png"></i>
+						<i class="text"></i>
+						(<i class="points">0</i>)
+						<i class="iconfont reset">&#xe6a4;</i>
+					</h4>
+					<div class="talent"></div>
+				</li>
+				<li>
+					<h4>
+						<i class="icon"><img src="/img/null.png"></i>
+						<i class="text"></i>
+						(<i class="points">0</i>)
+						<i class="iconfont reset">&#xe6a4;</i>
+					</h4>
+					<div class="talent"></div>
+				</li>
+				<li>
+					<h4>
+						<i class="icon"><img src="/img/null.png"></i>
+						<i class="text"></i>
+						(<i class="points">0</i>)
+						<i class="iconfont reset">&#xe6a4;</i>
+					</h4>
+					<div class="talent"></div>
+				</li>
+				<footer>
+					<p class="Fl">
+						剩余点数:<i class="points">61</i>
+						<span>需要等级:<i class="level">9</i></span>
+					</p>
+					<p class="Fr">
+						<i class="iconfont">&#xe63c; 导入数据</i>
+						<i class="iconfont reset">&#xe6a4; 重置天赋</i>
+					</p>
+				</footer>
+			</ol>
+			<!-- <div class="top select">
+			<h3>推荐天赋</h3>
+			<div id="top"></div>
+		</div> -->
+		</div>
+	</div>
+</body>
+
+</html>

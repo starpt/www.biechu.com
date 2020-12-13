@@ -1,0 +1,574 @@
+/************************************************
+* 2020-10-30
+* star@biechu.com
+************************************************/
+
+/* 重置 */
+* {
+	box-sizing: border-box;
+}
+body,
+button,
+dd,
+dl,
+dt,
+form,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+input,
+li,
+nav,
+ol,
+p,
+pre,
+textarea,
+table,
+tbody,
+td,
+th,
+ul {
+	margin: 0;
+	padding: 0;
+}
+body {
+	color: #fff;
+	font-family: 'Helvetica Neue', Arial, Sans-serif, 'Microsoft YaHei';
+	line-height: 1.5;
+	font-size: 14px;
+	padding: 56px 0 0 0;
+	background: #111 none center 0 no-repeat;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-size: 100%;
+	font-weight: 400;
+}
+h1 {
+	font-size: 30px;
+	text-align: center;
+	padding: 36px 0;
+}
+h2 {
+	font-size: 24px;
+}
+h3 {
+	font-size: 18px;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+li {
+	list-style: none;
+}
+del {
+	text-decoration: line-through;
+}
+em,
+i {
+	font-style: normal;
+}
+a,
+button {
+	color: #ccc;
+	text-decoration: none;
+	cursor: pointer;
+	transition: color 0.2s, background-color 0.2s;
+}
+a:hover,
+button:hover {
+	color: #fff;
+}
+input,
+button,
+textarea,
+select,
+option {
+	font: inherit;
+}
+img {
+	border: 0;
+}
+:focus {
+	outline: 0;
+}
+
+button,
+.Btn {
+	display: inline-block;
+	background-color: #08c;
+	border: 1px solid #0af;
+	border-radius: 1px;
+	color: #fff;
+	padding: 0 12px;
+	height: 34px;
+	line-height: 32px;
+	font-size: 14px;
+}
+button:hover,
+.Btn:hover {
+	background-color: #07b;
+	border-color: #09e;
+}
+
+/* 常用样式 */
+.Fl {
+	float: left;
+}
+.Fr {
+	float: right;
+}
+.Cb {
+	clear: both;
+	display: block;
+}
+.Pa {
+	position: absolute;
+}
+.Pr {
+	position: relative;
+}
+.Dn {
+	display: none;
+}
+.Img {
+	/* 图片设置自动居中 */
+	max-height: 100%;
+	max-width: 100%;
+	display: block;
+	margin: 0 auto;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+/* 弹窗 */
+#Mask {
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	cursor: default;
+	z-index: 90;
+	display: none;
+	background-color: rgba(0, 0, 0, 0.6);
+}
+.Pop {
+	position: fixed;
+	top: 35%;
+	left: 50%;
+	z-index: 91;
+	width: 85%;
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+	background-color: #fafafc;
+	text-align: center;
+	border-radius: 4px;
+	display: none;
+}
+#Pop > p {
+	line-height: 2;
+	font-size: 0.36rem;
+	padding: 24px 6px 18px;
+}
+#Pop > dl {
+	height: 42px;
+	font-size: 0.32rem;
+	line-height: 40px;
+	border-top: 1px solid #ddd;
+	overflow: hidden;
+}
+#Pop > dl > dt {
+	color: #999;
+	display: inline-block;
+	width: 50%;
+	border-right: 1px solid #ddd;
+	cursor: pointer;
+}
+#Pop > dl > dd {
+	color: #47b5ca;
+	display: inline-block;
+	width: 50%;
+	cursor: pointer;
+}
+
+/* IconFont */
+@font-face {
+	font-family: 'iconfont';
+	src: url('iconfont.woff?t=1606458721577') format('woff'), /* IE10+ */ url('iconfont.ttf?t=1606458721577') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+}
+
+.iconfont {
+	font-family: 'iconfont' !important;
+	font-size: 16px;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* 头部导航条 */
+header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 90;
+	height: 56px;
+	line-height: 56px;
+	width: 100%;
+	min-width: 1240px;
+	background: rgba(38, 38, 38, 0.9);
+	font-size: 16px;
+	box-shadow: 0 0 3px 2px rgba(0, 0, 0, 0.3);
+	display: flex;
+	justify-content: space-between;
+}
+/* 进度条 */
+#loadingBar {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 0;
+	height: 2px;
+	background: #06d;
+	transition: width 1.5s;
+}
+header > nav > a,
+header > nav > .iconfont {
+	float: left;
+	height: 36px;
+	line-height: 36px;
+	margin: 10px 0;
+	padding: 0 18px;
+	border-radius: 4px;
+	cursor: pointer;
+}
+header > nav > a:hover,
+header > nav > .iconfont:hover {
+	background: rgba(55, 55, 55, 0.5);
+}
+header > nav > .iconfont {
+	margin: 8px 0 0 12px;
+	border-radius: 50%;
+	width: 40px;
+	height: 40px;
+	line-height: 40px;
+	padding: 0;
+	text-align: center;
+}
+#logo {
+	width: 86px;
+	height: 28px;
+	background: url(bg/logo.svg);
+	padding: 0;
+	margin: 14px 12px;
+}
+header > form {
+	width: 35%;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+}
+header > form > input {
+	color: #777;
+	border: 1px solid #333;
+	height: 32px;
+	line-height: 32px;
+	padding: 0 12px;
+	border-radius: 4px 0 0 4px;
+	width: 100%;
+	background: rgba(16, 16, 16, 0.5);
+	transition: border-color 0.2s;
+}
+header > form > input:focus {
+	border-color: #149;
+}
+header > form > button {
+	color: #aaa;
+	border: 0;
+	height: 32px;
+	line-height: 32px;
+	padding: 0 24px;
+	border-radius: 0 4px 4px 0;
+	background: rgba(77, 77, 77, 0.5);
+}
+header > form > button:hover {
+	background: rgba(88, 88, 88, 0.5);
+}
+#login {
+	margin-right: 24px;
+}
+#login > a {
+	/* display: inline-block;
+	color: #fff;
+	background: #096cbc;
+	height: 32px;
+	line-height: 32px;
+	padding: 0 12px;
+	border-radius: 4px;
+	transition: background-color 0.2s; */
+}
+
+#login > a:hover {
+	background-color: #0e7ed9;
+}
+
+/* 左侧固定导航 */
+#left {
+	position: fixed;
+	top: 56px;
+	left: 0;
+	z-index: 89;
+	padding: 6px 0;
+	width: 240px;
+	height: calc(100% - 56px);
+	background: rgba(38, 38, 38, 0.8);
+	overflow-y: auto;
+	transition: left 0.3s;
+}
+#left.toggle {
+	left: -240px;
+}
+#left::-webkit-scrollbar {
+	width: 0;
+}
+#left:hover::-webkit-scrollbar {
+	width: 8px;
+}
+#left::-webkit-scrollbar-thumb {
+	border-radius: 4px;
+}
+#left:hover::-webkit-scrollbar-thumb {
+	background: #666;
+}
+#left > li {
+	border-top: 1px solid #383838;
+	padding: 6px 0;
+	text-indent: 24px;
+	line-height: 36px;
+	color: #999;
+}
+#left > li:first-child {
+	border: 0;
+}
+#left > li > a {
+	display: block;
+	height: 40px;
+	line-height: 40px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+#left > li > a.act,
+#left > li > a.act:hover {
+	background: rgba(55, 55, 55, 0.5);
+}
+#left > li > a:hover {
+	background-color: rgba(66, 66, 66, 0.5);
+}
+#left > li > a > .iconfont {
+	vertical-align: middle;
+	margin-right: 6px;
+	font-size: 16px;
+}
+#left > li > a.act > .iconfont {
+	font-size: 20px;
+}
+/* 相关链接 */
+#left > li.link > a > img {
+	width: 16px;
+	height: 16px;
+	vertical-align: middle;
+	margin-right: 12px;
+}
+#left > li.footer {
+	font-size: 12px;
+	line-height: 20px;
+	text-indent: 0;
+	padding: 12px 0 0 24px;
+	word-spacing: 6px;
+}
+#left > li.footer > a {
+	line-height: 24px;
+	display: inline;
+	color: #999;
+	white-space: nowrap;
+}
+#left > li.footer > a:hover {
+	color: #aaa;
+}
+#left > li.footer > p {
+	margin-top: 12px;
+}
+
+/* 职业颜色 */
+.druid,
+.druid:hover {
+	color: #ff7c0a;
+}
+.hunter,
+.hunter:hover {
+	color: #aad372;
+}
+.mage,
+.mage:hover {
+	color: #68ccef;
+}
+.paladin,
+.paladin:hover {
+	color: #f48cba;
+}
+.priest,
+.priest:hover {
+	color: #fff;
+}
+.rogue,
+.rogue:hover {
+	color: #fff468;
+}
+.shaman,
+.shaman:hover {
+	color: #2359ff;
+}
+.warlock,
+.warlock:hover {
+	color: #9382c9;
+}
+.warrior,
+.warrior:hover {
+	color: #c69b6d;
+}
+
+/* 中间主要内容 */
+#centr {
+	margin-left: 240px;
+	transition: margin 0.3s;
+	min-width: 1240px;
+}
+#centr.toggle {
+	margin: 0;
+}
+#centr > .main {
+	margin: 0 auto;
+}
+
+/* 鼠标跟随提示*/
+.Tips {
+	position: absolute;
+	bottom: calc(100% + 3px);
+	left: calc(100% + 3px);
+	border: 1px solid #777;
+	border-top-color: #ccc;
+	border-radius: 6px;
+	background: rgba(1, 7, 33, 0.8);
+	padding: 6px;
+	z-index: 9;
+	display: none;
+	box-shadow: 0 0 6px 3px rgba(0, 0, 0, 0.8);
+	font-size: 12px;
+	font-family: Verdana;
+	text-align: left;
+	width: max-content;
+	min-width: 240px;
+	max-width: 320px;
+}
+.Tips .rely {
+	clear: both;
+	color: #f00;
+	display: block;
+	margin-top: 1px;
+}
+.Tips > .rank {
+	color: #fc0;
+	margin-top: 1px;
+	display: block;
+}
+.Tips > .rank > .Fl,
+.Tips > .rank > .Fr {
+	color: #fff;
+}
+.Tips > .next {
+	margin: 3px 0;
+	display: block;
+}
+
+/*
+#talent .talent .Pa{
+	position: absolute;
+	bottom: 100%;
+	left: 100%;
+	border: 1px solid #777;
+	border-top-color: #ccc;
+	border-radius: 6px;
+	background: rgba(1,7,33,.8);
+	padding: 6px;
+	z-index: 3;
+	width: max-content;
+	display: none;
+	box-shadow: 0 0 6px 3px rgba(0,0,0,.8);
+	font-size: 12px;
+	font-family: Verdana;
+	text-align: left;
+	min-width: 240px;
+	max-width: 360px;
+	transition: opacity .2s;
+}
+#talent .talent > div:hover > .Pa{
+	display: block;
+}
+#talent .talent .Pa > .rely{
+	color: #3c0;
+	display: block;
+	margin-top: 1px;
+}
+#talent .talent > .default > p > .rely{
+	color: #f00;
+}
+#talent .talent .Pa > .rank{
+	color: #fc0;
+	margin-top: 1px;
+	display: block;
+}
+#talent .talent .Pa > .next{
+	margin: 3px 0;
+	display: block;
+}
+#talent .talent .Pa > .rank > .Fl, #talent .talent .Pa > .rank > .Fr{
+	color: #fff;
+}
+#talent .talent .Pa > .learn ,#talent .talent .Pa > .forget{
+	color: #3c0;
+	margin-top: 3px;
+	display: none;
+}
+#talent .talent > .enable > p > .learn{
+	display: block;
+}
+#talent .talent > .disable > p > .forget{
+	display: block;
+}
+
+
+ */
+
+/*当屏幕尺寸小于1240px时，应用下面的CSS样式*/
+@media screen and (max-width: 1240px) {
+	#left {
+		left: -240px;
+	}
+	#left.toggle {
+		left: 0;
+	}
+	#centr {
+		margin: 0;
+	}
+}

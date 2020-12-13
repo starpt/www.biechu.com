@@ -1,0 +1,308 @@
+/************************************************
+* 2020-11-18
+* star@biechu.com
+* 天赋样式
+************************************************/
+
+.main {
+	text-align: center;
+	padding: 48px 0;
+}
+.select {
+	border: 1px solid rgba(55, 55, 55, 0.5);
+	border-radius: 4px;
+	width: 840px;
+	background: rgba(38, 38, 38, 0.8);
+	padding: 24px 200px 48px;
+	line-height: 72px;
+	margin: 24px auto;
+}
+.icons > h3 {
+	color: #ccc;
+	display: none;
+}
+.select > h3 {
+	display: block;
+}
+.icons > a {
+	display: inline-block;
+	width: 56px;
+	text-align: center;
+	background: url(bg/iconDefault.png) center 0 no-repeat;
+	line-height: 24px;
+	position: relative;
+	opacity: 0.6;
+	transition: opacity 0.2s;
+}
+.select > a {
+	width: 72px;
+}
+.icons > a:hover {
+	opacity: 1;
+}
+.icons > a::after {
+	content: '';
+	position: absolute;
+	margin: 3px 0;
+	left: 50%;
+	top: 0;
+	width: 38px;
+	height: 38px;
+	background: url(bg/iconHove.png);
+	opacity: 0;
+	transform: translateX(-50%);
+	transition: opacity 0.2s;
+}
+.icons > a.act {
+	background-image: url(bg/iconAction.png);
+	opacity: 1;
+}
+.icons > a:hover::after {
+	opacity: 1;
+}
+.icons > a > img {
+	width: 32px;
+	height: 32px;
+	display: block;
+	margin: 6px auto;
+}
+
+#talent {
+	width: 776px;
+	margin: 36px 0 0;
+	display: none;
+}
+#talent > li {
+	border: 1px solid rgba(55, 55, 55, 0.5);
+	border-radius: 6px;
+	background: rgba(55, 55, 55, 0.5);
+	width: 244px;
+	display: inline-block;
+	margin: 0 6px;
+}
+#talent > li > h4 {
+	height: 36px;
+	line-height: 36px;
+	position: relative;
+	color: #ccc;
+}
+#talent > li > h4 > .icon {
+	width: 22px;
+	height: 22px;
+	display: inline-block;
+	padding: 2px;
+	vertical-align: middle;
+	position: relative;
+	top: -1px;
+}
+#talent > li > h4 > .icon > img {
+	width: 18px;
+	height: 18px;
+	vertical-align: top;
+}
+#talent > li > h4 > .icon::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 22px;
+	height: 22px;
+	background: url(bg/iconDefault.png);
+	background-size: 22px;
+}
+#talent > li > h4 > .reset {
+	position: absolute;
+	right: 12px;
+	cursor: pointer;
+	color: #a00;
+	transition: color 0.2s;
+	top: 6px;
+	padding: 0 3px;
+	line-height: 24px;
+}
+#talent > li > h4 > .iconfont:hover {
+	color: #f22;
+}
+#talent .talent {
+	height: 522px;
+	background: #111 none no-repeat;
+	background-size: 100% 100%;
+	border-radius: 6px;
+	padding: 9px 0 0 9px;
+}
+#talent .talent > div {
+	position: relative;
+	width: 44px;
+	height: 44px;
+	margin: 6px;
+	float: left;
+	cursor: default;
+	visibility: hidden;
+}
+#talent .talent > .default,
+#talent .talent > .disable,
+#talent .talent > .enable {
+	visibility: visible;
+}
+#talent .talent > div::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 44px;
+	height: 44px;
+	background: url(bg/iconDefault.png);
+}
+#talent .talent .mask {
+	position: absolute;
+	cursor: pointer;
+	left: 3px;
+	top: 3px;
+	width: 38px;
+	height: 38px;
+	background-size: 100% 100%;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	opacity: 0.5;
+	z-index: 1;
+}
+#talent .talent .mask:hover + .Tips {
+	display: block;
+}
+#talent .talent > .disable > .mask {
+	border-color: rgba(255, 204, 0, 0.6);
+}
+#talent .talent > .enable > .mask {
+	border-color: rgba(51, 204, 0, 0.6);
+}
+#talent .talent .mask:hover {
+	opacity: 1;
+	background-image: url(bg/iconHove.png);
+}
+#talent .talent > div > img {
+	width: 36px;
+	height: 36px;
+	margin: 4px;
+}
+#talent .default > img {
+	filter: grayscale(100%);
+}
+#talent .talent .size {
+	position: absolute;
+	bottom: -3px;
+	right: -3px;
+	padding: 0 3px;
+	line-height: 15px;
+	background: rgba(0, 0, 0, 0.9);
+	color: #ccc;
+	border: 1px solid #555;
+	border-radius: 6px;
+	font-size: 11px;
+	font-family: Verdana;
+	box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.5);
+	z-index: 2;
+}
+#talent .talent > .enable > .size {
+	border-color: #030;
+	color: #3c0;
+}
+#talent .talent > .disable > .size {
+	color: #fc0;
+	border-color: #870;
+}
+#talent .learn,
+#talent .forget {
+	margin-top: 3px;
+	display: none;
+}
+#talent .enable .learn {
+	float: left;
+	color: #3c0;
+	word-spacing: 6px;
+	display: block;
+}
+#talent .enable .forget,
+#talent .disable .forget {
+	float: right;
+	color: #f00;
+	display: block;
+}
+/* 箭头 */
+#talent .arrow-1,
+#talent .arrow1,
+#talent .arrow4,
+#talent .arrow5,
+#talent .arrow8,
+#talent .arrow12,
+#talent .arrow16 {
+	position: absolute;
+	width: 16px;
+	background: url(bg/arrow.png) bottom;
+	bottom: 36px;
+	left: 14px;
+	z-index: 1;
+	opacity: 0.7;
+}
+#talent .default .arrow-1,
+#talent .default .arrow1,
+#talent .default .arrow4,
+#talent .default .arrow5,
+#talent .default .arrow8,
+#talent .default .arrow12,
+#talent .default .arrow16 {
+	filter: grayscale(100%);
+}
+#talent .arrow-1 {
+	height: 23px;
+	transform: rotate(90deg) translate(25px, -26px);
+}
+#talent .arrow1 {
+	height: 23px;
+	transform: rotate(270deg) translate(-26px, -25px);
+}
+#talent .arrow4 {
+	height: 24px;
+}
+#talent .arrow5 {
+	width: 44px;
+	height: 48px;
+	background-image: url(bg/arrow1.png);
+	bottom: 36px;
+	left: -15px;
+}
+#talent .arrow8 {
+	height: 78px;
+}
+#talent .arrow12 {
+	height: 134px;
+}
+#talent .arrow.a16 {
+	height: 190px;
+}
+#talent > footer {
+	padding: 12px 18px;
+	color: #777;
+	font-size: 14px;
+}
+#talent > footer .points,
+#talent > footer .level {
+	color: #ccc;
+	margin: 0 24px 0 2px;
+}
+#talent > footer .iconfont {
+	font-size: inherit;
+	cursor: pointer;
+	color: #a90;
+	transition: color 0.2s;
+	margin-left: 24px;
+	word-spacing: -1px;
+}
+#talent > footer .reset {
+	color: #a00;
+}
+#talent > footer .iconfont:hover {
+	color: #fc0;
+}
+#talent > footer .reset:hover {
+	color: #f22;
+}
