@@ -1,5 +1,7 @@
 # Koa2 RESTful API 服务器脚手架
 
+ghost
+
 这是一个基于 Koa2 的轻量级 RESTful API Server 脚手架，支持 ES6。
 
 **注意：** 因升级 Koa 版本至 2.3.0+，为配合相应的依赖项，故需要 Node.js 版本大于等于 v8.0.0（建议 v11.13.0），NPM 大于等于 v5.0.0。建议使用 yarn 代替 npm。
@@ -742,4 +744,4 @@ _v0.0.4 2017 年 02 月 07 日 15:57:17_
 1、修改了部分配置文件的配置方法，使之更为规范（老版本用户无须理会，对程序没有影响）。
 2、修改了 eslintrc.js 文件中的 JavaScript 版本配置，改为 ES8，兼容 async、await。
 3、修改 gulpfile.js 文件第 12 行，检查`src/**/*.js`文件。
-"# www.biechu.com" 
+"# www.biechu.com"
