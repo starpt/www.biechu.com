@@ -1,7 +1,5 @@
 # Koa2 RESTful API 服务器脚手架
 
-ghost
-
 这是一个基于 Koa2 的轻量级 RESTful API Server 脚手架，支持 ES6。
 
 **注意：** 因升级 Koa 版本至 2.3.0+，为配合相应的依赖项，故需要 Node.js 版本大于等于 v8.0.0（建议 v11.13.0），NPM 大于等于 v5.0.0。建议使用 yarn 代替 npm。
