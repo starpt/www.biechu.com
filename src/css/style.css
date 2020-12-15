@@ -501,65 +501,6 @@ header > form > button:hover {
 	display: block;
 }
 
-/*
-#talent .talent .Pa{
-	position: absolute;
-	bottom: 100%;
-	left: 100%;
-	border: 1px solid #777;
-	border-top-color: #ccc;
-	border-radius: 6px;
-	background: rgba(1,7,33,.8);
-	padding: 6px;
-	z-index: 3;
-	width: max-content;
-	display: none;
-	box-shadow: 0 0 6px 3px rgba(0,0,0,.8);
-	font-size: 12px;
-	font-family: Verdana;
-	text-align: left;
-	min-width: 240px;
-	max-width: 360px;
-	transition: opacity .2s;
-}
-#talent .talent > div:hover > .Pa{
-	display: block;
-}
-#talent .talent .Pa > .rely{
-	color: #3c0;
-	display: block;
-	margin-top: 1px;
-}
-#talent .talent > .default > p > .rely{
-	color: #f00;
-}
-#talent .talent .Pa > .rank{
-	color: #fc0;
-	margin-top: 1px;
-	display: block;
-}
-#talent .talent .Pa > .next{
-	margin: 3px 0;
-	display: block;
-}
-#talent .talent .Pa > .rank > .Fl, #talent .talent .Pa > .rank > .Fr{
-	color: #fff;
-}
-#talent .talent .Pa > .learn ,#talent .talent .Pa > .forget{
-	color: #3c0;
-	margin-top: 3px;
-	display: none;
-}
-#talent .talent > .enable > p > .learn{
-	display: block;
-}
-#talent .talent > .disable > p > .forget{
-	display: block;
-}
-
-
- */
-
 /*当屏幕尺寸小于1240px时，应用下面的CSS样式*/
 @media screen and (max-width: 1240px) {
 	#left {

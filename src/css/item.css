@@ -1,0 +1,68 @@
+/************************************************
+* 2020-12-15
+* star@biechu.com
+* 装备样式
+************************************************/
+
+.main {
+	text-align: center;
+	padding: 48px 0;
+}
+.select {
+	border: 1px solid rgba(55, 55, 55, 0.5);
+	border-radius: 4px;
+	width: 840px;
+	background: rgba(38, 38, 38, 0.8);
+	padding: 24px 200px 48px;
+	line-height: 72px;
+	margin: 24px auto;
+}
+.icons > h3 {
+	color: #ccc;
+	display: none;
+}
+.select > h3 {
+	display: block;
+}
+.icons > p {
+	display: inline-block;
+	width: 56px;
+	text-align: center;
+	background: url(bg/iconDefault.png) center 0 no-repeat;
+	line-height: 24px;
+	position: relative;
+	opacity: 0.6;
+	transition: opacity 0.2s;
+}
+.select > p {
+	width: 72px;
+}
+.icons > a:hover {
+	opacity: 1;
+}
+.icons > a::after {
+	content: '';
+	position: absolute;
+	margin: 3px 0;
+	left: 50%;
+	top: 0;
+	width: 38px;
+	height: 38px;
+	background: url(bg/iconHove.png);
+	opacity: 0;
+	transform: translateX(-50%);
+	transition: opacity 0.2s;
+}
+.icons > a.act {
+	background-image: url(bg/iconAction.png);
+	opacity: 1;
+}
+.icons > a:hover::after {
+	opacity: 1;
+}
+.icons > a > img {
+	width: 32px;
+	height: 32px;
+	display: block;
+	margin: 6px auto;
+}
