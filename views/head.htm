@@ -4,9 +4,14 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title><%=titel%></title>
+	<title><%=title%></title>
 	<meta name="keywords" content="<%=keywords%>">
 	<meta name="description" content="<%=description%>">
 	<link rel="shortcut icon" href="/favicon.ico">
 	<link rel="stylesheet" href="/css/style.css">
-</head>
+	<% if (typeof css === 'string') { %>
+	<link rel="stylesheet" href="/css/<%= css %>.css">
+	<% }else if(css instanceof Array) { css.forEach(item => {%>
+	<link rel="stylesheet" href="/css/<%= item %>.css">
+	<% })} %>
+</head>`
