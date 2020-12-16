@@ -2,13 +2,15 @@ const gulp = require('gulp')
 const uglify = require('gulp-uglify') //js压缩
 const babel = require('gulp-babel') //兼容性
 const cssmin = require('gulp-cssmin') //css压缩
+const spritesmith = require('gulp.spritesmith') //拼合小图标
 const browserSync = require('browser-sync').create() //热启动
 const static = './static/' //静态资源目录
 
+// "gulp-htmlmin": "^5.0.1"
 // const htmlmin = require('gulp-htmlmin') //html压缩
-// gulp.task('html', () => {
+// gulp.task('views', () => {
 // 	return gulp
-// 		.src('./src/**/*.htm')
+// 		.src('./src/views/**/*.htm')
 // 		.pipe(
 // 			htmlmin({
 // 				collapseWhitespace: true,
@@ -21,7 +23,7 @@ const static = './static/' //静态资源目录
 // 				minifyCSS: true //压缩html中的css代码
 // 			})
 // 		)
-// 		.pipe(gulp.dest(static))
+// 		.pipe(gulp.dest('./views/'))
 // })
 
 // 压缩过的文件
@@ -54,7 +56,17 @@ gulp.task('css', () => {
 
 // 静态图片及图标
 gulp.task('img', () => {
-	return gulp.src(['./src/**/*.+(png|jpg|jpeg|gif|svg|ico)']).pipe(gulp.dest(static))
+	return gulp.src(['./src/**/*.+(png|jpg|jpeg|gif|svg|ico)', '!./src/css/bg/icon/*.png']).pipe(gulp.dest(static))
+})
+
+gulp.task('sprite', function () {
+	var spriteData = gulp.src('./src/css/bg/icon/*.png').pipe(
+		spritesmith({
+			imgName: 'sprite.png',
+			cssName: 'sprite.css'
+		})
+	)
+	return spriteData.pipe(gulp.dest(static + '/css/'))
 })
 
 // robots.txt
@@ -71,7 +83,7 @@ gulp.task('robots', () => {
 
 // gulp.task('build', gulp.series('html', 'style', 'img', 'css', 'js', 'minjs', 'robots'))
 
-gulp.task('static', gulp.series('style', 'img', 'css', 'js', 'minjs', 'robots'))
+gulp.task('static', gulp.series('sprite', 'style', 'img', 'css', 'js', 'minjs', 'robots'))
 gulp.task('default', () => {
 	browserSync.init({
 		index: 'index.htm',

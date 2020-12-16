@@ -32,15 +32,16 @@
 	line-height: 24px;
 	position: relative;
 	opacity: 0.6;
-	transition: opacity 0.2s;
+	position: relative;
+	cursor: pointer;
 }
 .select > p {
 	width: 72px;
 }
-.icons > a:hover {
+.icons > p:hover {
 	opacity: 1;
 }
-.icons > a::after {
+.icons > p::after {
 	content: '';
 	position: absolute;
 	margin: 3px 0;
@@ -53,16 +54,37 @@
 	transform: translateX(-50%);
 	transition: opacity 0.2s;
 }
-.icons > a.act {
+.icons > p.act {
 	background-image: url(bg/iconAction.png);
 	opacity: 1;
 }
-.icons > a:hover::after {
+.icons > p:hover::after {
 	opacity: 1;
 }
-.icons > a > img {
+.icons > p > img {
 	width: 32px;
 	height: 32px;
 	display: block;
 	margin: 6px auto;
+}
+.icons > p:hover span {
+	display: inline;
+}
+.icons span {
+	position: absolute;
+	display: none;
+	text-align: left;
+	top: 42px;
+	left: 2px;
+	width: 80px;
+	background: #333;
+	padding: 4px 0;
+	z-index: 1;
+	border-radius: 2px;
+}
+.icons span > a {
+	display: block;
+	background: #333 none 0 0 no-repeat;
+	color: #666;
+	text-indent: 18px;
 }
