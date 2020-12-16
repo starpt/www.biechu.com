@@ -2,10 +2,45 @@ const gulp = require('gulp')
 const uglify = require('gulp-uglify') //js压缩
 const babel = require('gulp-babel') //兼容性
 const cssmin = require('gulp-cssmin') //css压缩
-const spritesmith = require('gulp.spritesmith') //拼合小图标
 const browserSync = require('browser-sync').create() //热启动
 const static = './static/' //静态资源目录
 
+const through = require('through2')
+const path = require('path')
+const fs = require('fs')
+const base64 = options => {
+	encode = file => {
+		let data = file.contents.toString()
+		data.match(/url\([^\)]+\)/g).forEach(item => {
+			let url = item.replace(/\(|\)|\'/g, '')
+			url = url.replace(/^url/g, '')
+			if (/^http:|https:|data/.test(url)) return
+			url = path.resolve(file.path, '../' + url).replace(/\?.*$/, '')
+			let ext = url.replace(/^.*\.([^?]+).*$/, '$1').toLowerCase(),
+				filepath = fs.readFileSync(url)
+			console.log(url, filepath.length)
+			//console.log(fs.readFileSync('D:\\Biechu\\www\\src\\css\\bg\\arrow1.png'))
+			//console.log(filepath)
+
+			//console.log(extname)
+			//if (extname == 'png') {
+			let imageContent = new Buffer(filepath.toString('base64'))
+			data = data.replace(item, "url('data:image/" + ext.toLowerCase() + ';base64,' + imageContent + "')")
+			//}
+			//data = data.replace(item, "url('data:image/" + ext.toLowerCase() + ';base64,' + imageContent + "')")
+		})
+
+		return data
+	}
+	let rebase = (file, encoding, callback) => {
+		if (file.isNull()) return callback(null, file)
+		if (file.isStream()) return callback(createError(file, 'Streaming not supported'))
+		file.contents = new Buffer(encode(file))
+		callback(null, file)
+	}
+
+	return through.obj(rebase)
+}
 // "gulp-htmlmin": "^5.0.1"
 // const htmlmin = require('gulp-htmlmin') //html压缩
 // gulp.task('views', () => {
@@ -45,9 +80,28 @@ gulp.task('js', () => {
 gulp.task('style', () => {
 	return gulp
 		.src(['./src/css/**/*.css'])
+		.pipe(
+			base64({
+				maxSize: 1024 * 8,
+				extensions: ['jpg', 'png']
+			})
+		)
 		.pipe(cssmin())
 		.pipe(gulp.dest(static + '/css/'))
 })
+
+// gulp.task('base64', function () {
+// 	return gulp.src('./src/css/*.css')
+// 			.pipe(base64({
+// 					baseDir: 'public',
+// 					extensions: ['svg', 'png', /\.jpg#datauri$/i],
+// 					exclude:    [/\.server\.(com|net)\/dynamic\//, '--live.jpg'],
+// 					maxImageSize: 8*1024, // bytes
+// 					debug: true
+// 			}))
+// 			.pipe(concat('main.css'))
+// 			.pipe(gulp.dest('./public/css'));
+// });
 
 // css相关文件: iconfont bg
 gulp.task('css', () => {
@@ -56,18 +110,19 @@ gulp.task('css', () => {
 
 // 静态图片及图标
 gulp.task('img', () => {
-	return gulp.src(['./src/**/*.+(png|jpg|jpeg|gif|svg|ico)', '!./src/css/bg/icon/*.png']).pipe(gulp.dest(static))
+	return gulp.src(['./src/img/**/*.+(png|jpg|jpeg|gif|svg|ico)']).pipe(gulp.dest(static))
 })
 
-gulp.task('sprite', function () {
-	var spriteData = gulp.src('./src/css/bg/icon/*.png').pipe(
-		spritesmith({
-			imgName: 'sprite.png',
-			cssName: 'sprite.css'
-		})
-	)
-	return spriteData.pipe(gulp.dest(static + '/css/'))
-})
+// const spritesmith = require('gulp.spritesmith') //拼合小图标
+// gulp.task('sprite', function () {
+// 	var spriteData = gulp.src('./src/css/bg/icon/*.png').pipe(
+// 		spritesmith({
+// 			imgName: 'sprite.png',
+// 			cssName: 'sprite.css'
+// 		})
+// 	)
+// 	return spriteData.pipe(gulp.dest(static + '/css/'))
+// })
 
 // robots.txt
 gulp.task('robots', () => {
@@ -83,7 +138,8 @@ gulp.task('robots', () => {
 
 // gulp.task('build', gulp.series('html', 'style', 'img', 'css', 'js', 'minjs', 'robots'))
 
-gulp.task('static', gulp.series('sprite', 'style', 'img', 'css', 'js', 'minjs', 'robots'))
+//gulp.task('static', gulp.series('style', 'img', 'js', 'minjs', 'robots'))
+gulp.task('static', gulp.series('style', gulp.parallel('css', 'img', 'js', 'minjs', 'robots')))
 gulp.task('default', () => {
 	browserSync.init({
 		index: 'index.htm',
