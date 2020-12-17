@@ -4,7 +4,7 @@ module.exports = require('koa-route').get('/', async ctx => {
 			title: '魔兽世界经典旧世_别处',
 			keywords: '',
 			description: '',
-			css: ''
+			css: 'index'
 		},
 		left: {act: '/'}
 	}

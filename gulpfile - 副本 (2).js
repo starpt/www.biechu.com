@@ -1,10 +1,21 @@
+'use strict'
 const gulp = require('gulp')
-const nodemon = require('gulp-nodemon')
+
 const uglify = require('gulp-uglify') //js压缩
 const babel = require('gulp-babel') //兼容性
 const cssmin = require('gulp-cssmin') //css压缩
 const browserSync = require('browser-sync').create() //热启动
 const static = './static/' //静态资源目录
+//const nodemon = require('gulp-nodemon')
+
+// gulp.task('nodemon', function (done) {
+// 	nodemon({
+// 		script: 'app.js'
+// 		//ext: 'js html',
+// 		//env: {NODE_ENV: 'development'},
+// 		//done: done
+// 	})
+// })
 
 // css url文件 base64 编码
 const through = require('through2')
@@ -37,28 +48,6 @@ const base64 = options => {
 	}
 	return through.obj(rebase)
 }
-
-gulp.task('nodemon', function () {
-	nodemon({
-		script: 'app.js',
-		ext: 'js htm',
-		//ignore: '**/*',
-		env: {
-			NODE_ENV: 'development'
-		}
-	}).on('start', function () {
-		console.log('browser refreshed.')
-		browserSync.init({
-			index: 'index.htm',
-			port: 88,
-			//https: true,
-			server: {
-				baseDir: './src'
-			}
-		})
-		gulp.watch(['./src/**']).on('change', browserSync.reload)
-	})
-})
 
 // 压缩css,编码url base64文件
 let urlList = []
