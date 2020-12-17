@@ -1,5 +1,4 @@
 node_modules/
 static/
-temp/
 package-lock.json
 *.lnk

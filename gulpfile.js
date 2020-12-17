@@ -1,9 +1,4 @@
 const gulp = require('gulp')
-const nodemon = require('gulp-nodemon')
-const uglify = require('gulp-uglify') //js压缩
-const babel = require('gulp-babel') //兼容性
-const cssmin = require('gulp-cssmin') //css压缩
-const browserSync = require('browser-sync').create() //热启动
 const static = './static/' //静态资源目录
 
 // css url文件 base64 编码
@@ -38,29 +33,8 @@ const base64 = options => {
 	return through.obj(rebase)
 }
 
-gulp.task('nodemon', function () {
-	nodemon({
-		script: 'app.js',
-		ext: 'js htm',
-		//ignore: '**/*',
-		env: {
-			NODE_ENV: 'development'
-		}
-	}).on('start', function () {
-		console.log('browser refreshed.')
-		browserSync.init({
-			index: 'index.htm',
-			port: 88,
-			//https: true,
-			server: {
-				baseDir: './src'
-			}
-		})
-		gulp.watch(['./src/**']).on('change', browserSync.reload)
-	})
-})
-
 // 压缩css,编码url base64文件
+const cssmin = require('gulp-cssmin') //css压缩
 let urlList = []
 gulp.task('css', () => {
 	return gulp
@@ -81,6 +55,8 @@ gulp.task('url', () => {
 })
 
 // 压缩js,不压缩.min.js文件
+const babel = require('gulp-babel') //兼容性
+const uglify = require('gulp-uglify') //js压缩
 gulp.task('js', () => {
 	return gulp
 		.src(['./src/js/**/*.js', '!./src/js/**/*.min.js'])
@@ -104,12 +80,34 @@ gulp.task('other', () => {
 	return gulp.src(['./src/robots.txt']).pipe(gulp.dest(static))
 })
 
-gulp.task('static', gulp.series('css', gulp.parallel('url', 'js', 'minjs', 'img', 'other')))
-gulp.task('default', () => {
+// 清除静态文件
+const clean = require('gulp-clean')
+gulp.task('clean', () => {
+	return gulp.src(static, {read: false}).pipe(clean())
+})
+
+// 打包静态文件
+gulp.task('build', gulp.series(['clean', 'css'], gulp.parallel('url', 'js', 'minjs', 'img', 'other')))
+
+// 热启动开发环境
+const browserSync = require('browser-sync').create() //热启动
+const nodemon = require('gulp-nodemon')
+gulp.task('start', () => {
+	nodemon({
+		script: 'app.js',
+		ignore: ['src/', 'static/', 'temp/', 'node_modules/', 'gulpfile.js', 'package.json', 'package-lock.json', 'pm2.js', 'README.md']
+	})
+	browserSync.init({
+		proxy: 'http://localhost',
+		port: 89
+	})
+	gulp.watch(['api/', 'config/', 'routes/', 'static/', 'views/']).on('change', browserSync.reload)
+})
+
+gulp.task('dev', () => {
 	browserSync.init({
 		index: 'index.htm',
 		port: 88,
-		//https: true,
 		server: {
 			baseDir: './src'
 		}
