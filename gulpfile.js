@@ -92,22 +92,23 @@ gulp.task('build', gulp.series(['clean', 'css'], gulp.parallel('url', 'js', 'min
 // 热启动开发环境
 const browserSync = require('browser-sync').create() //热启动
 const nodemon = require('gulp-nodemon')
-gulp.task('start', () => {
+gulp.task('dev', () => {
 	nodemon({
 		script: 'app.js',
+		env: {NODE_ENV: 'development'},
 		ignore: ['src/', 'static/', 'temp/', 'node_modules/', 'gulpfile.js', 'package.json', 'package-lock.json', 'pm2.js', 'README.md']
 	})
 	browserSync.init({
-		proxy: 'http://localhost',
-		port: 89
+		proxy: 'http://localhost:81',
+		port: 88
 	})
-	gulp.watch(['api/', 'config/', 'routes/', 'static/', 'views/']).on('change', browserSync.reload)
+	gulp.watch(['api/', 'config/', 'routes/', 'src/', 'views/']).on('change', browserSync.reload)
 })
 
-gulp.task('dev', () => {
+gulp.task('start', () => {
 	browserSync.init({
 		index: 'index.htm',
-		port: 88,
+		port: 89,
 		server: {
 			baseDir: './src'
 		}
