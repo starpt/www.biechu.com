@@ -6,7 +6,7 @@ module.exports = require('koa-route').get('/', async ctx => {
 			description: '',
 			css: 'index'
 		},
-		left: {act: '/'}
+		left: {act: 'index'}
 	}
 	await ctx.render('index', data)
 })

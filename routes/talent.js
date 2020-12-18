@@ -6,7 +6,7 @@ module.exports = require('koa-route').get('/talent', async ctx => {
 			description: '魔兽世界经典怀旧服燃烧的远征(TBC)2.43版本各职业天赋模拟器，支持导入其它网站数据。',
 			css: 'talent'
 		},
-		left: {act: '/talent'}
+		left: {act: 'talent'}
 	}
 	await ctx.render('talent', data)
 })

@@ -1,6 +1,6 @@
 <ul id="left">
 	<li>
-		<a href="/" <% if (act==='/') { %> class="act" <%}%>>
+		<a href="/" <% if (act==='index') { %> class="act" <%}%>>
 			<i class="iconfont">&#xe60a;</i>
 			魔兽世界 燃烧的远征
 		</a>
@@ -22,9 +22,9 @@
 		</a>
 	</li>
 	<li>
-		<a href="/item">
+		<a href="/item" <%if (act === 'item') {_%> class="act" <%}%>>
 			<i class="iconfont">&#xe603;</i>
-			装备搭配
+			装备模拟器
 		</a>
 		<a href="">
 			<i class="iconfont">&#xe6e7;</i>
@@ -42,7 +42,7 @@
 			<i class="iconfont">&#xe6c9;</i>
 			声望奖励
 		</a>
-		<a href="/talent" <%if (act === '/talent') {_%> class="act" <%}%>>
+		<a href="/talent" <%if (act === 'talent') {_%> class="act" <%}%>>
 			<i class="iconfont">&#xe607;</i>
 			天赋模拟器
 		</a>
