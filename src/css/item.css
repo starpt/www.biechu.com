@@ -74,9 +74,9 @@
 	position: absolute;
 	display: none;
 	text-align: left;
-	top: 42px;
-	left: 2px;
-	width: 80px;
+	top: 44px;
+	left: 0;
+	width: 98px;
 	background: #333;
 	padding: 4px 0;
 	z-index: 1;
@@ -84,7 +84,48 @@
 }
 .icons span > a {
 	display: block;
-	background: #333 none 0 0 no-repeat;
-	color: #666;
-	text-indent: 18px;
+	background: #333 none 6px 6px no-repeat;
+	background-size: 16px;
+	color: #999;
+	padding: 0 6px 0 28px;
+	line-height: 28px;
+}
+.icons span > a:hover {
+	background-color: #444;
+	color: #ddd;
+}
+.icons span > a.bloodElf {
+	background-image: url(bg/race/bloodElf.jpg);
+}
+.icons span > a.draenei {
+	background-image: url(bg/race/draenei.jpg);
+}
+.icons span > a.dwarf {
+	background-image: url(bg/race/dwarf.jpg);
+}
+.icons span > a.gnome {
+	background-image: url(bg/race/gnome.jpg);
+}
+.icons span > a.human {
+	background-image: url(bg/race/human.jpg);
+}
+.icons span > a.nightElf {
+	background-image: url(bg/race/nightElf.jpg);
+}
+.icons span > a.orc {
+	background-image: url(bg/race/orc.jpg);
+}
+.icons span > a.tauren {
+	background-image: url(bg/race/tauren.jpg);
+}
+.icons span > a.troll {
+	background-image: url(bg/race/troll.jpg);
+}
+.icons span > a.undead {
+	background-image: url(bg/race/undead.jpg);
+}
+
+#item {
+	height: ;
+	background: url();
 }
