@@ -244,6 +244,7 @@ header {
 }
 header > nav > a,
 header > nav > .iconfont {
+	color: #aaa;
 	float: left;
 	height: 36px;
 	line-height: 36px;

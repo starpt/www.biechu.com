@@ -13,8 +13,8 @@ ejs(app, {
 	root: path.resolve('views'), // 视图文件地址
 	layout: false,
 	viewExt: 'htm', //视图文件后缀名
-	//debug: true,
-	cache: false
+	cache: process.env.NODE_ENV === 'development' ? false : true
+	//debug: true
 })
 
 // const jwt = require('koa-jwt')

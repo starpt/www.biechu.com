@@ -102,7 +102,7 @@ gulp.task('dev', () => {
 		proxy: 'http://localhost:81',
 		port: 88
 	})
-	gulp.watch(['api/', 'config/', 'routes/', 'src/', 'views/']).on('change', browserSync.reload)
+	gulp.watch(['./api/**', './config/**', './routes/**', './src/**', './views/**']).on('change', browserSync.reload)
 })
 
 gulp.task('start', () => {
