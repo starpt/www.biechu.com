@@ -4,9 +4,6 @@
 ************************************************/
 
 /* 重置 */
-* {
-	box-sizing: border-box;
-}
 body,
 button,
 dd,
@@ -34,9 +31,10 @@ th,
 ul {
 	margin: 0;
 	padding: 0;
+	box-sizing: border-box;
 }
 body {
-	color: #fff;
+	color: #ccc;
 	font-family: 'Helvetica Neue', Arial, Sans-serif, 'Microsoft YaHei';
 	line-height: 1.5;
 	font-size: 14px;
