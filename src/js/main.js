@@ -79,7 +79,6 @@
 		require('jQuery.min.js', () => {
 			loadingBar.style.width = '60%'
 			require(load.split(',').length > 1 ? load.split(',') : load)
-
 			$(document)
 				.ready(() => {
 					$('header>nav>.iconfont').click(() => {
