@@ -78,6 +78,18 @@
 	if (load) {
 		require('jQuery.min.js', () => {
 			loadingBar.style.width = '60%'
+
+			// 登录/注册
+			$('#login>button').click(() => {
+				if ($.login) {
+					$.login()
+				} else {
+					require('login.js', () => {
+						$.login()
+					})
+				}
+			})
+
 			require(load.split(',').length > 1 ? load.split(',') : load)
 			$(document)
 				.ready(() => {
