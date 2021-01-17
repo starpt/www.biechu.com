@@ -1,26 +1,4 @@
-/*
- Navicat Premium Data Transfer
 
- Source Server         : localhost
- Source Server Type    : MySQL
- Source Server Version : 80020
- Source Host           : localhost:3306
- Source Schema         : biechu
-
- Target Server Type    : MySQL
- Target Server Version : 80020
- File Encoding         : 65001
-
- Date: 15/01/2021 09:58:30
-*/
-
-SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS
-= 0;
-
--- ----------------------------
--- Table structure for user
--- ----------------------------
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user`
 (
@@ -73,12 +51,3 @@ COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '昵称',
 SET = utf8
 COLLATE = utf8_general_ci ROW_FORMAT = Fixed;
 
--- ----------------------------
--- Records of user
--- ----------------------------
-INSERT INTO `user`
-VALUES
-  (1, 'admin', 'aa71e0d2485171b66c0b34a948b8efe7', 'admin@biechu.com', 13857781950, '2021-01-14 17:16:56', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2021-01-13 14:44:26');
-
-SET FOREIGN_KEY_CHECKS
-= 1;

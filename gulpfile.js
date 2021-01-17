@@ -59,7 +59,7 @@ const babel = require('gulp-babel') //兼容性
 const uglify = require('gulp-uglify') //js压缩
 gulp.task('js', () => {
 	return gulp
-		.src(['./src/js/**/*.js', '!./src/js/**/*.min.js'])
+		.src(['./src/js/**/*.js', '!./src/js/**/*.min.js', '!./src/js/public/**'])
 		.pipe(babel({presets: ['@babel/preset-env']}))
 		.pipe(uglify())
 		.pipe(gulp.dest(static + 'js'))
@@ -67,7 +67,7 @@ gulp.task('js', () => {
 
 // 复制不压缩的.min.js文件
 gulp.task('minjs', () => {
-	return gulp.src(['./src/js/**/*.min.js']).pipe(gulp.dest(static + 'js'))
+	return gulp.src(['./src/js/**/*.min.js', '!./src/js/public/**']).pipe(gulp.dest(static + 'js'))
 })
 
 // 静态图片资源,不包括css目录文件
@@ -91,7 +91,8 @@ gulp.task('build', gulp.series(['clean', 'css'], gulp.parallel('url', 'js', 'min
 
 // 热启动开发环境
 const browserSync = require('browser-sync').create() //热启动
-const nodemon = require('gulp-nodemon')
+const concat = require('gulp-concat') // 合并public.js
+const nodemon = require('gulp-nodemon') //后端服务热启动
 gulp.task('dev', () => {
 	nodemon({
 		script: 'app.js',
@@ -102,45 +103,12 @@ gulp.task('dev', () => {
 		proxy: 'http://localhost:81',
 		port: 88
 	})
+
+	// 监控public.js文件更新合并
+	gulp.watch(['./src/js/public/*.js']).on('change', () => {
+		gulp.src(['./src/js/public/jQuery.min.js', './src/js/public/main.js', './src/js/public/*.js']).pipe(concat('public.js')).pipe(gulp.dest('./src/js'))
+	})
+
+	// 热更新刷新浏览器
 	gulp.watch(['./api/**', './config/**', './routes/**', './src/**', './views/**']).on('change', browserSync.reload)
 })
-
-gulp.task('start', () => {
-	browserSync.init({
-		index: 'index.htm',
-		port: 89,
-		server: {
-			baseDir: './src'
-		}
-	})
-	gulp.watch(['./src/**']).on('change', browserSync.reload)
-})
-
-// 清除static
-// const clean = require('gulp-clean') //static清除
-// gulp.task('clean', () => {
-// 	return gulp.src('static', {read: false}).pipe(clean())
-// })
-//gulp.task('build', gulp.series('clean', gulp.parallel('html', 'style', 'img', 'css', 'js', 'jqyery')))
-
-// gulp.task('build', gulp.series('html', 'style', 'img', 'css', 'js', 'minjs', 'robots'))
-
-// "gulp-htmlmin": "^5.0.1"
-// const htmlmin = require('gulp-htmlmin') //html压缩
-// gulp.task('views', () => {
-// 	return gulp
-// 		.src('./src/views/**/*.htm')
-// 		.pipe(
-// 			htmlmin({
-// 				collapseWhitespace: true,
-// 				collapseBooleanAttributes: true,
-// 				removeComments: true,
-// 				removeEmptyAttributes: true, //清除所有的空属性
-// 				removeScriptTypeAttributes: true,
-// 				removeStyleLinkTypeAttributes: true,
-// 				minifyJS: true, //压缩html中的javascript代码
-// 				minifyCSS: true //压缩html中的css代码
-// 			})
-// 		)
-// 		.pipe(gulp.dest('./views/'))
-// })

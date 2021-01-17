@@ -144,7 +144,7 @@
 #talent .talent > .enable {
 	visibility: visible;
 }
-#talent .talent > div::before {
+#talent .talent > div::after {
 	content: '';
 	position: absolute;
 	left: 0;
@@ -186,6 +186,7 @@
 }
 #talent .default > img {
 	filter: grayscale(100%);
+	filter: gray; /*ie9- */
 }
 #talent .talent .size {
 	position: absolute;
@@ -251,6 +252,7 @@
 #talent .default .arrow12,
 #talent .default .arrow16 {
 	filter: grayscale(100%);
+	filter: gray; /*ie9- */
 }
 #talent .arrow-1 {
 	height: 23px;

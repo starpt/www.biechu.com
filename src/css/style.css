@@ -114,7 +114,7 @@ button,
 }
 button:hover,
 .Btn:hover {
-	background-color: #07b;
+	background-color: #07c;
 	border-color: #09e;
 }
 
@@ -215,7 +215,7 @@ button:hover,
 }
 
 /* 头部导航条 */
-header {
+#header {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -227,11 +227,12 @@ header {
 	background: rgba(38, 38, 38, 0.9);
 	font-size: 16px;
 	box-shadow: 0 0 3px 2px rgba(0, 0, 0, 0.3);
-	display: flex;
-	justify-content: space-between;
+	text-align: center;
+	/* display: flex;
+	justify-content: space-between; */
 }
 /* 进度条 */
-#loadingBar {
+#header > .bar {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -240,22 +241,25 @@ header {
 	background: #06d;
 	transition: width 1.5s;
 }
-header > nav > a,
-header > nav > .iconfont {
+#header > nav {
+	float: left;
+}
+#header > nav > a,
+#header > nav > .iconfont {
 	color: #aaa;
 	float: left;
 	height: 36px;
 	line-height: 36px;
 	margin: 10px 0;
-	padding: 0 18px;
+	padding: 0 12px;
 	border-radius: 4px;
 	cursor: pointer;
 }
-header > nav > a:hover,
-header > nav > .iconfont:hover {
-	background: rgba(55, 55, 55, 0.5);
+#header > nav > a:hover,
+#header > nav > .iconfont:hover {
+	background-color: rgba(55, 55, 55, 0.5);
 }
-header > nav > .iconfont {
+#header > nav > .iconfont {
 	margin: 8px 0 0 12px;
 	border-radius: 50%;
 	width: 40px;
@@ -264,20 +268,22 @@ header > nav > .iconfont {
 	padding: 0;
 	text-align: center;
 }
-#logo {
+#header > nav > .logo {
 	width: 86px;
 	height: 28px;
-	background: url(bg/logo.svg);
+	background-image: url(bg/logo.svg);
 	padding: 0;
 	margin: 14px 12px;
 }
-header > form {
-	width: 35%;
-	display: inline-flex;
-	justify-content: center;
-	align-items: center;
+#header > nav > .logo:hover {
+	background-color: transparent;
 }
-header > form > input {
+#header > form {
+	width: 32%;
+	display: inline-block;
+	position: relative;
+}
+#header > form > input {
 	color: #777;
 	border: 1px solid #333;
 	height: 32px;
@@ -287,38 +293,29 @@ header > form > input {
 	width: 100%;
 	background: rgba(16, 16, 16, 0.5);
 	transition: border-color 0.2s;
+	margin-right: 64px;
 }
-header > form > input:focus {
+#header > form > input:focus {
 	border-color: #149;
 }
-header > form > button {
+#header > form > button {
 	color: #aaa;
 	border: 0;
 	height: 32px;
 	line-height: 32px;
-	padding: 0 24px;
+	width: 64px;
 	border-radius: 0 4px 4px 0;
-	background: rgba(77, 77, 77, 0.5);
+	background-color: rgba(77, 77, 77, 0.5);
+	position: absolute;
+	right: -64px;
+	top: 12px;
 }
-header > form > button:hover {
+#header > form > button:hover {
 	background: rgba(88, 88, 88, 0.5);
 }
-#login {
+#header > .user {
+	float: right;
 	margin-right: 24px;
-}
-#login > a {
-	/* display: inline-block;
-	color: #fff;
-	background: #096cbc;
-	height: 32px;
-	line-height: 32px;
-	padding: 0 12px;
-	border-radius: 4px;
-	transition: background-color 0.2s; */
-}
-
-#login > a:hover {
-	background-color: #0e7ed9;
 }
 
 /* 左侧固定导航 */
