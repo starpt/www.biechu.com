@@ -4,11 +4,13 @@
 ************************************************/
 
 /* 重置 */
+
 body,
 button,
 dd,
 dl,
 dt,
+div,
 form,
 h1,
 h2,
@@ -18,6 +20,7 @@ h5,
 h6,
 hr,
 input,
+label,
 li,
 nav,
 ol,
@@ -100,22 +103,59 @@ img {
 	outline: 0;
 }
 
+/* 表单元素 */
+label {
+	position: relative;
+	height: 60px;
+	display: block;
+	padding: 6px 0 36px;
+}
+label > .iconfont {
+	position: absolute;
+	left: 9px;
+	top: 12px;
+	color: #666;
+}
 button,
 .Btn {
 	display: inline-block;
 	background-color: #08c;
-	border: 1px solid #0af;
+	border: 1px solid #19d;
 	border-radius: 1px;
 	color: #fff;
-	padding: 0 12px;
-	height: 34px;
-	line-height: 32px;
+	padding: 0 18px;
+	margin: 0 6px;
+	height: 32px;
+	line-height: 30px;
 	font-size: 14px;
+	transition: color 0.2s, background-color 0.2s, border-color 0.2s;
 }
 button:hover,
 .Btn:hover {
 	background-color: #07c;
-	border-color: #09e;
+	border-color: #08c;
+}
+button.cancel,
+.Btn.cancel {
+	border-color: #bbb;
+	background-color: #ccc;
+	color: #333;
+}
+button.cancel:hover,
+.Btn.cancel:hover {
+	border-color: #ddd;
+	background-color: #eee;
+}
+input {
+	background-color: #fff;
+	border-radius: 2px;
+	border: 1px solid #ddd;
+	color: #555;
+	display: inline-block;
+	height: 32px;
+	line-height: 30px;
+	padding: 0 12px;
+	transition: border-color 0.2s;
 }
 
 /* 常用样式 */
@@ -138,8 +178,9 @@ button:hover,
 .Dn {
 	display: none;
 }
+
+/* 图片设置自动居中 */
 .Img {
-	/* 图片设置自动居中 */
 	max-height: 100%;
 	max-width: 100%;
 	display: block;
@@ -150,60 +191,135 @@ button:hover,
 }
 
 /* 弹窗 */
-#Mask {
+.Mask {
 	width: 100%;
 	height: 100%;
 	position: fixed;
 	top: 0;
 	left: 0;
-	cursor: default;
-	z-index: 90;
-	display: none;
-	background-color: rgba(0, 0, 0, 0.6);
+	background-color: rgba(0, 0, 0, 0.5);
 }
 .Pop {
 	position: fixed;
-	top: 35%;
-	left: 50%;
-	z-index: 91;
-	width: 85%;
-	-webkit-transform: translate(-50%, -50%);
-	transform: translate(-50%, -50%);
-	background-color: #fafafc;
-	text-align: center;
-	border-radius: 4px;
-	display: none;
+	top: 30%;
+	width: 426px;
+	background-color: rgba(55, 55, 55, 0.96);
+	border-radius: 2px;
+	box-shadow: 0 3px 3px 1px rgba(0, 0, 0, 0.3);
+	transform: scale(0, 0);
+	transition: transform 0.2s;
+	padding-bottom: 12px;
 }
-#Pop > p {
-	line-height: 2;
-	font-size: 0.36rem;
-	padding: 24px 6px 18px;
-}
-#Pop > dl {
-	height: 42px;
-	font-size: 0.32rem;
-	line-height: 40px;
-	border-top: 1px solid #ddd;
+.Pop > .title {
+	font-size: 16px;
+	height: 41px;
+	line-height: 41px;
+	padding: 0 36px 0 24px;
 	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	background-color: rgba(66, 66, 66, 0.3);
 }
-#Pop > dl > dt {
+.Pop > .body {
+	padding: 36px 24px 0;
+	color: #eee;
+}
+.Pop > .button {
+	padding: 6px 24px 12px;
+	text-align: right;
+}
+.Pop > .button > button {
+	margin: 0px;
+}
+.Pop > .close {
+	position: absolute;
+	right: 5px;
+	top: 5px;
+	width: 31px;
+	height: 31px;
+	cursor: pointer;
+	border-radius: 50%;
+	transition: background-color 0.2s;
+}
+.Pop > .close:hover {
+	background-color: rgba(77, 77, 77, 0.3);
+}
+.Pop > .close::after,
+.Pop > .close::before {
+	content: '';
+	position: absolute;
+	width: 13px;
+	height: 1px;
+	top: 15px;
+	left: 9px;
+	border-top: 1px solid #ccc;
+	transform: rotate(45deg);
+	transition: border-color 0.2s;
+}
+.Pop > .close::before {
+	transform: rotate(-45deg);
+}
+.Pop > .close:hover::after,
+.Pop > .close:hover::before {
+	border-color: #fff;
+}
+.Pop input {
+	height: 36px;
+	line-height: 36px;
+	border: 0;
+	width: 100%;
+	color: #333;
+	background-color: rgba(221, 221, 221, 0.8);
+}
+.Pop > .foot {
+	margin: 0 24px 6px;
+}
+.Pop.dialog > .body {
+	text-indent: 2em;
+	padding-top: 36px;
+	text-indent: 2em;
+	min-height: 92px;
+}
+.Pop.tips {
+	width: 320px;
+	min-height: 0;
+	padding-bottom: 10px;
+}
+.Pop.tips > .body {
+	min-height: 29px;
+	padding: 10px 36px 0 15px;
+	text-indent: 0;
+}
+.Pop.login > .button > button.confirm {
+	display: block;
+	height: 36px;
+	line-height: 34px;
+	width: 100%;
+}
+.Pop.login input {
+	padding-left: 32px;
+}
+.Pop.login > .foot > i {
+	font-size: 12px;
 	color: #999;
-	display: inline-block;
-	width: 50%;
-	border-right: 1px solid #ddd;
 	cursor: pointer;
+	transition: color 0.2s;
+	margin-left: 9px;
 }
-#Pop > dl > dd {
-	color: #47b5ca;
-	display: inline-block;
-	width: 50%;
-	cursor: pointer;
+.Pop.login > .foot > i:hover {
+	color: #ccc;
 }
 
 /* IconFont */
 @font-face {
 	font-family: 'iconfont';
-	src: url('iconfont.woff?t=1606458721577') format('woff'), /* IE10+ */ url('iconfont.ttf?t=1606458721577') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+	src: url('iconfont.woff') format('woff'), url('iconfont.ttf') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+}
+
+@font-face {
+	font-family: 'iconfont'; /* project id 2168986 */
+	src: url('//at.alicdn.com/t/font_2168986_76wtnztc4ua.eot');
+	src: url('//at.alicdn.com/t/font_2168986_76wtnztc4ua.eot?#iefix') format('embedded-opentype'), url('//at.alicdn.com/t/font_2168986_76wtnztc4ua.woff2') format('woff2'), url('//at.alicdn.com/t/font_2168986_76wtnztc4ua.woff') format('woff'), url('//at.alicdn.com/t/font_2168986_76wtnztc4ua.ttf') format('truetype'), url('//at.alicdn.com/t/font_2168986_76wtnztc4ua.svg#iconfont') format('svg');
 }
 
 .iconfont {
@@ -286,10 +402,8 @@ button:hover,
 #header > form > input {
 	color: #777;
 	border: 1px solid #333;
-	height: 32px;
-	line-height: 32px;
-	padding: 0 12px;
-	border-radius: 4px 0 0 4px;
+	height: 34px;
+	line-height: 34px;
 	width: 100%;
 	background: rgba(16, 16, 16, 0.5);
 	transition: border-color 0.2s;
@@ -301,21 +415,27 @@ button:hover,
 #header > form > button {
 	color: #aaa;
 	border: 0;
-	height: 32px;
+	height: 34px;
 	line-height: 32px;
+	margin: 0;
 	width: 64px;
 	border-radius: 0 4px 4px 0;
 	background-color: rgba(77, 77, 77, 0.5);
 	position: absolute;
 	right: -64px;
-	top: 12px;
+	top: 11px;
 }
 #header > form > button:hover {
 	background: rgba(88, 88, 88, 0.5);
 }
 #header > .user {
 	float: right;
-	margin-right: 24px;
+	margin-right: 18px;
+}
+#header > .user > button {
+	height: 34px;
+	line-height: 32px;
+	padding: 0 12px;
 }
 
 /* 左侧固定导航 */

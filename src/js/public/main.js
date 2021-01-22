@@ -71,7 +71,7 @@ if (main.length) {
 	let load = main.data('load')
 	if (load) require(load.split(','))
 }
-const loading = width => {
+$.loading = width => {
 	let bar = header.find('>.bar')
 	bar = bar.length ? bar : $('<div class="bar">').prependTo($('#header'))
 	width = typeof width === 'number' ? width : 100
@@ -82,20 +82,20 @@ const loading = width => {
 		}, 1500)
 	}
 }
-loading(30)
-$(document)
-	.ready(() => {
-		loading(60)
-		header.find('>nav>.iconfont').click(() => {
-			$('#left').toggleClass('toggle')
-			$('#right').toggleClass('toggle')
-			$('#centr').toggleClass('toggle')
-			return false
-		})
+$.loading(30)
+$(document).ready(() => {
+	$.loading(60)
+	header.find('>nav>.iconfont').click(() => {
+		$('#left').toggleClass('toggle')
+		$('#right').toggleClass('toggle')
+		$('#centr').toggleClass('toggle')
+		return false
 	})
-	.keydown(e => {
-		if (e.keyCode === 9) header.find('>nav>.iconfont').click()
-	})
-document.body.onload = loading
+})
 
-header.find('>.user').click(() => {})
+$(window).on({
+	load: $.loading,
+	keydown: e => {
+		if (e.keyCode === 9) header.find('>nav>.iconfont').click()
+	}
+})

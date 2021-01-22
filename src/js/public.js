@@ -74,7 +74,7 @@ if (main.length) {
 	let load = main.data('load')
 	if (load) require(load.split(','))
 }
-const loading = width => {
+$.loading = width => {
 	let bar = header.find('>.bar')
 	bar = bar.length ? bar : $('<div class="bar">').prependTo($('#header'))
 	width = typeof width === 'number' ? width : 100
@@ -85,68 +85,243 @@ const loading = width => {
 		}, 1500)
 	}
 }
-loading(30)
-$(document)
-	.ready(() => {
-		loading(60)
-		header.find('>nav>.iconfont').click(() => {
-			$('#left').toggleClass('toggle')
-			$('#right').toggleClass('toggle')
-			$('#centr').toggleClass('toggle')
-			return false
-		})
-	})
-	.keydown(e => {
-		if (e.keyCode === 9) header.find('>nav>.iconfont').click()
-	})
-document.body.onload = loading
-
-header.find('>.user').click(() => {})
-
-/************************************************
- * 2021-01-17
- * star@biechu.com
- * 弹窗
- ************************************************/
-
-function Pop(h) {
-	//弹窗
-	var mask = DOM.get('#Mask') //遮罩
-	if (!mask) {
-		mask = document.createElement('div')
-		mask.id = 'Mask'
-		document.body.insertBefore(mask, null)
-	}
-	DOM.css(mask, {
-		display: 'block',
-		height: DOM.docHeight()
-	})
-	var pop = DOM.get('.Pop')
-	if (!pop) {
-		pop = document.createElement('div')
-		pop.className = 'Pop'
-		document.body.insertBefore(pop, null)
-	}
-	pop.style.display = 'block'
-	pop.style.top = (document.documentElement.scrollTop || document.body.scrollTop) + (document.documentElement.clientHeight - 220) / 2 + 'px'
-	pop.style.left = (document.documentElement.scrollLeft || document.body.scrollLeft) + (document.documentElement.clientWidth - 385) / 2 + 'px'
-	var main = DOM.get('.main', pop) //主要内容
-	if (!main) {
-		main = document.createElement('div')
-		main.className = 'main'
-		pop.insertBefore(main, null)
-	}
-	main.innerHTML = h
-	var hide = DOM.get('.hide', main) //关闭
-	if (!hide) {
-		hide = document.createElement('a')
-		hide.className = 'hide close'
-		main.insertBefore(hide, null)
-	}
-	var close = DOM.query('.close', pop)
-	Event.on(close, 'click', function () {
-		mask.style.display = ''
-		pop.style.display = ''
+$.loading(30)
+$(document).ready(() => {
+	$.loading(60)
+	header.find('>nav>.iconfont').click(() => {
+		$('#left').toggleClass('toggle')
+		$('#right').toggleClass('toggle')
+		$('#centr').toggleClass('toggle')
 		return false
 	})
-}
+})
+
+$(window).on({
+	load: $.loading,
+	keydown: e => {
+		if (e.keyCode === 9) header.find('>nav>.iconfont').click()
+	}
+})
+
+/************************************************
+ * 2020-07-25
+ * gky@qq.com
+ * 拖动控件
+ ************************************************/
+
+!(function ($) {
+	let win = $(window)
+	$.fn.drag = function (margin, title) {
+		title = title || '.title'
+		let start = this.children(title)
+		let drag = this.css('position', 'fixed')
+		start = start.length ? start : drag
+		drag.move = false
+		start.css('cursor', 'move').on('mousedown', e => {
+			if (drag.move) return
+			drag.move = true
+			let offset = drag.offset()
+			margin = $.dragMargin ? null : margin
+			if (margin == 'left') {
+				$.dragMargin = offset.left
+			} else if (margin == 'top') {
+				$.dragMargin = offset.top
+			} else if (margin && typeof margin == 'number') {
+				$.dragMargin = margin
+			}
+			drag.x = offset.left - e.clientX - win.scrollLeft()
+			drag.y = offset.top - e.clientY - win.scrollTop()
+			let mousemove = e => {
+				if (!drag.move) return
+				drag.css({
+					top: e.clientY + drag.y,
+					left: e.clientX + drag.x
+				})
+				return false
+			}
+			let mouseup = () => {
+				let margin = $.dragMargin || 12
+				let animate = drag.offset()
+				if (animate.top + drag[0].offsetHeight + margin > win.height()) animate.top = win.height() - drag[0].offsetHeight - margin
+				if (animate.top < margin) animate.top = margin
+				if (animate.left + drag[0].offsetWidth + margin > win.width()) animate.left = win.width() - drag[0].offsetWidth - margin
+				if (animate.left < margin) animate.left = margin
+				drag.animate(animate, 200)
+				drag.move = false
+				win.off('mousemove', mousemove).off('mouseup', mouseup)
+			}
+			win.on('mousemove', mousemove).on('mouseup', mouseup)
+		})
+		return this
+	}
+})(window.$)
+
+/**
+ * 2021-01-17
+ * star@biechu.com
+ * 弹窗对话框
+ * @params config = {}
+ * mask 是否有背景遮罩 1 点击不关闭 其它关闭
+ * css 弹窗样式 tips, dialog 默认无
+ * width 宽度
+ * titel 标题提示
+ * body 主要内容 html
+ * button 底部按钮 [{css 样式, text文字, click 点击事件}]
+ * foot 底部内容 html
+ * drag 是否可以拖动，默认不可拖动
+ * delay 等待多少毫秒后自动关闭, 默认不关闭
+ */
+
+!(function ($) {
+	$.pop = function (config) {
+		config = config || {}
+		let close = () => {
+			if (pop) {
+				pop.animate({opacity: 0}, 400, () => {
+					pop.remove()
+					pop = null
+				})
+			}
+			if (mask) {
+				mask.animate({opacity: 0}, 400, () => {
+					mask.remove()
+					mask = null
+				})
+			}
+			win.off('keydown')
+		}
+		let mask = config.mask
+			? $('<div class="Mask">')
+					.css('zIndex', '9' + $('.Mask').length)
+					.appendTo('body')
+					.click(function (e) {
+						if (config.mask !== 1 && e.target === this) {
+							close()
+						}
+					})
+			: null
+
+		let pop = $('<div class="Pop' + (config.css ? ' ' + config.css : '') + '">')
+			.appendTo(mask || 'body')
+			.html((config.title ? '<h4 class="title">' + config.title + '</h4>' : '') + '<div class="body"' + (config.title ? ' style="padding-top:18px"' : '') + '>' + (config.body || '') + '</div>\
+			<i class="close"></i>')
+		if (!mask) pop.css('zIndex', '9' + $('.Pop').length)
+
+		config.button = config.button || []
+		if (config.button.length) {
+			let button = $('<div class="button">')
+			for (let i = 0; i < config.button.length; i++) {
+				$('<button class="' + (config.button[i].css || '') + '">' + (config.button[i].text || '') + '</button>')
+					.appendTo(button)
+					.click(config.button[i].click)[0].close = close
+			}
+			button.appendTo(pop).children('.confirm').focus()
+		}
+
+		if (config.foot) {
+			$('<div class="foot">' + config.foot + '</div>').appendTo(pop)
+		}
+		pop.find('.close,.cancel').click(close)
+
+		let win = $(window).on('keydown', e => {
+			// 回车
+			if (e.keyCode === 13 && e.target.className !== 'confirm') return false
+
+			// ESC
+			if (e.keyCode === 27) close()
+		})
+		pop.css({
+			left: win.width() / 2 - pop.width() / 2,
+			top: win.height() / 3 - pop.height() / 3,
+			width: config.width,
+			transform: 'scale(1,1)'
+		})
+		if (config.drag) pop.drag()
+		if (typeof config.delay === 'number') {
+			setTimeout(close, config.delay)
+		}
+		return pop
+	}
+	$.alert = body => {
+		$.pop({
+			css: 'dialog',
+			body,
+			mask: 1,
+			button: [
+				{
+					text: '确定',
+					css: 'confirm',
+					click: function () {
+						this.close()
+					}
+				}
+			]
+		})
+	}
+
+	$.confirm = (body, callback) => {
+		$.pop({
+			css: 'dialog',
+			body,
+			mask: 1,
+			button: [
+				{
+					text: '确定',
+					css: 'confirm',
+					click: function () {
+						if (callback instanceof Function) callback()
+						this.close()
+					}
+				},
+				{
+					text: '取消',
+					css: 'cancel'
+				}
+			]
+		})
+	}
+
+	$.tips = (body, delay) => {
+		$.pop({
+			css: 'tips',
+			body,
+			delay: delay || 3000
+		})
+	}
+})(window.$)
+
+!(function ($) {
+	let login = $.pop({
+		css: 'login',
+		title: '登录',
+		mask: 1,
+		drag: 1,
+		width: 360,
+		body: '<form action="/api/login" method="POST">\
+		<label>\
+		<input type="text" placeholder="用户名" autocomplete="off">\
+		<i class="iconfont">&#xeadd;</i>\
+		</label>\
+		<label>\
+		<input type="password" placeholder="密码">\
+		<i class="iconfont">&#xe77b;</i>\
+		</label>\
+		</form>',
+		foot: '<i style="margin:0">忘记密码</i>\
+		<i>忘记用户名</i>\
+		<i class="Fr">免费注册</i>',
+		button: [
+			{
+				text: '登录',
+				css: 'confirm',
+				click: function () {
+					this.close()
+				}
+			}
+		]
+	})
+})(window.$)
+
+header.children('.user').click(() => {
+	login.show()
+})

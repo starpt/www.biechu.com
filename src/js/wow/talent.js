@@ -174,7 +174,7 @@ $(document).ready(() => {
 	}
 
 	let init = (_, tal) => {
-		loading()
+		$.loading()
 		tal = tal || location.hash
 		if (!reg.test(tal)) {
 			main.find('>h1>i').html('')
