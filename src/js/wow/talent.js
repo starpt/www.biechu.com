@@ -9,6 +9,7 @@ $(document).ready(() => {
 		data,
 		li,
 		key,
+		tim,
 		reg = /.*(druid|hunter|mage|paladin|priest|rogue|shaman|warlock|warrior)\D*(\d*).*/i
 	let getPoints = sort => {
 		let p
@@ -28,32 +29,40 @@ $(document).ready(() => {
 		return p
 	}
 
-	let tim,
-		footer = () => {
-			let points = getPoints(),
-				level = $('#talent>footer .level'),
-				tal
-			$('#talent>footer .points').html(points) //剩余点数
-			points >= 61
-				? level.parent().hide()
-				: level
-						.html(70 - points)
-						.parent()
-						.show() //等级
-			for (let sort in data) {
-				tal = tal ? tal + 6 : key
-				for (let i in data[sort].talent) {
-					tal += data[sort].talent[i].size
-				}
-				tal = tal.replace(/0*$/, '')
+	let footer = () => {
+		let tal,
+			points = getPoints(),
+			level = $('#talent>footer .level')
+		$('#talent>footer .points').html(points) //剩余点数
+		points >= 61
+			? level.parent().hide()
+			: level
+					.html(70 - points)
+					.parent()
+					.show() //等级
+		for (let sort in data) {
+			tal = tal ? tal + 6 : key
+			for (let i in data[sort].talent) {
+				tal += data[sort].talent[i].size
 			}
-			clearTimeout(tim) //hashchange事件
-			$(window).off('hashchange', init)
-			location.hash = tal.replace(/6*$/, '')
-			tim = setTimeout(() => {
-				$(window).on('hashchange', init)
-			}, 200)
+			tal = tal.replace(/0*$/, '')
 		}
+		clearTimeout(tim) //hashchange事件
+		$(window).off('hashchange', init)
+		location.hash = tal.replace(/6*$/, '')
+		tim = setTimeout(() => {
+			if (points <= 0) {
+				for (let sort in data) {
+					for (let i in data[sort].talent) {
+						if (data[sort].talent[i].start === 'default') {
+							updata(sort, i)
+						}
+					}
+				}
+			}
+			$(window).on('hashchange', init)
+		}, 200)
+	}
 	let tips = (sort, index) => {
 		//设置Tips HTML
 		let talent = data[sort].talent,
@@ -152,7 +161,7 @@ $(document).ready(() => {
 			}
 			if (talent[i].rely == index) {
 				//依赖联动
-				setTimeout(() => {
+				tim = setTimeout(() => {
 					updata(sort, i)
 				}, 100) //需要异步执行
 			}

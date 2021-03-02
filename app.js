@@ -4,7 +4,11 @@ const path = require('path')
 const fs = require('fs')
 const app = new Koa()
 
-//开发环境启动静态资源
+// 请求的参数转为json格式返回
+const bodyParser = require('koa-bodyparser')
+app.use(bodyParser())
+
+// 开发环境启动静态资源
 if (process.env.NODE_ENV === 'development') {
 	app.use(require('koa-static')(path.resolve('src')))
 }
@@ -17,10 +21,7 @@ ejs(app, {
 	//debug: true
 })
 
-// const jwt = require('koa-jwt')
-// app.use(jwt({secret: 'shared-secret', passthrough: true}))
-
-//自动加载路由
+// 自动加载路由
 fs.readdirSync(path.resolve('routes')).forEach(file => {
 	app.use(require('./routes/' + file))
 })

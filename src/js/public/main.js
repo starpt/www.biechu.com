@@ -96,6 +96,9 @@ $(document).ready(() => {
 $(window).on({
 	load: $.loading,
 	keydown: e => {
-		if (e.keyCode === 9) header.find('>nav>.iconfont').click()
+		if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON' && e.keyCode === 9 && $('.Pop:visible').length === 0) {
+			header.find('>nav>.iconfont').click()
+			return false
+		}
 	}
 })

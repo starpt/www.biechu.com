@@ -83,7 +83,7 @@ gulp.task('other', () => {
 // 清除静态文件
 const clean = require('gulp-clean')
 gulp.task('clean', () => {
-	return gulp.src(static, {read: false}).pipe(clean())
+	return gulp.src([static + 'css', static + 'img', static + 'js'], {read: false}).pipe(clean())
 })
 
 // 打包静态文件
@@ -110,5 +110,5 @@ gulp.task('dev', () => {
 	})
 
 	// 热更新刷新浏览器
-	gulp.watch(['./api/**', './config/**', './routes/**', './src/**', './views/**']).on('change', browserSync.reload)
+	gulp.watch(['./config/**', './routes/**', './src/**', './views/**']).on('change', browserSync.reload)
 })

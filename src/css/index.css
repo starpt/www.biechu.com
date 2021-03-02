@@ -5,13 +5,14 @@
 
 body {
 	background-image: url(bg/indexFocus.jpg);
+	background-position-y: 56px;
 }
 
 #right {
 	position: fixed;
 	top: 56px;
 	right: 0;
-	z-index: 89;
+	z-index: 4;
 	padding: 12px 0;
 	width: 280px;
 	height: calc(100% - 56px);
@@ -109,7 +110,7 @@ body {
 #cd {
 	font-size: 60px;
 	color: #ddd;
-	margin: 240px auto 0;
+	margin: 306px auto 0;
 	width: 560px;
 	white-space: nowrap;
 	height: 75px;

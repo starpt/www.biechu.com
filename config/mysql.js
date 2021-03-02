@@ -1,42 +1,22 @@
-/* const mysql = require('mysql2/promise')
-
-const conn = async (sql, database, callback) => {
-	let conn = await mysql.createConnection({host: 'localhost', user: 'root', password: 'skystar', database})
-	const [rows] = await conn.execute(sql)
-	conn.close()
-	callback(rows)
-}
-
-const tbc = async (sql, callback) => {
-	let conn = await mysql.createConnection({host: 'localhost', user: 'root', password: 'skystar', database: 'tbc'})
-	const [rows] = await conn.execute(sql)
-	conn.close()
-	callback(rows)
-}
-
-const classic = async (sql, callback) => {
-	let conn = await mysql.createConnection({host: 'localhost', user: 'root', password: 'skystar', database: 'classic'})
-	const [rows] = await conn.execute(sql)
-	conn.close()
-	callback(rows)
-}
-
-module.exports = [tbc, classic]
- */
-
-const mysql = require('mysql2')
-const db = async (sql, next) => {
-	let conn = await mysql.createConnection({host: 'localhost', user: 'root', password: 'skystar', database: 'tbc'})
+const db = async (database, sql, next, error) => {
+	let conn = require('mysql2').createConnection({host: 'localhost', user: 'root', password: 'skystar', database})
 	await conn
 		.promise()
 		.query(sql)
 		.then(([rows]) => {
-			next(rows)
+			if (typeof next === 'function') next(rows)
 		})
 		.catch(e => {
-			console.log(e)
+			if (typeof error === 'function') error('500错误, 系统信息查询错误！')
+			console.error(e)
 		})
 		.then(() => conn.end())
 }
 
-module.exports = db
+exports.tbc = (sql, next, error) => {
+	return db('tbc', sql, next, error)
+}
+
+module.exports = (sql, next, error) => {
+	return db('biechu', sql, next, error)
+}

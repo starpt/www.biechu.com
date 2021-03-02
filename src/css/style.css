@@ -19,6 +19,7 @@ h4,
 h5,
 h6,
 hr,
+img,
 input,
 label,
 li,
@@ -31,7 +32,9 @@ table,
 tbody,
 td,
 th,
-ul {
+ul,
+::after,
+::before {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
@@ -104,18 +107,6 @@ img {
 }
 
 /* 表单元素 */
-label {
-	position: relative;
-	height: 60px;
-	display: block;
-	padding: 6px 0 36px;
-}
-label > .iconfont {
-	position: absolute;
-	left: 9px;
-	top: 12px;
-	color: #666;
-}
 button,
 .Btn {
 	display: inline-block;
@@ -146,16 +137,27 @@ button.cancel:hover,
 	border-color: #ddd;
 	background-color: #eee;
 }
-input {
+button[disabled],
+.Btn[disabled] {
+	border-color: #6bf;
+	background-color: #6bf;
+	cursor: not-allowed;
+}
+input[type='text'],
+input[type='password'] {
 	background-color: #fff;
 	border-radius: 2px;
-	border: 1px solid #ddd;
+	border: 1px solid transparent;
 	color: #555;
 	display: inline-block;
 	height: 32px;
 	line-height: 30px;
 	padding: 0 12px;
 	transition: border-color 0.2s;
+}
+input[type='text']:focus,
+input[type='password']:focus {
+	border-color: #07c;
 }
 
 /* 常用样式 */
@@ -189,6 +191,26 @@ input {
 	top: 50%;
 	transform: translateY(-50%);
 }
+/* 404错误页面 */
+.Error {
+	background: #111 url(bg/404.png) no-repeat center 200px;
+	text-align: center;
+	padding-top: 450px;
+}
+.Error > dl > dt {
+	font-size: 90px;
+	color: #07c;
+	display: inline-block;
+}
+.Error > dl > dd {
+	display: inline-block;
+	text-align: left;
+	line-height: 40px;
+	padding-left: 12px;
+}
+.Error > dl > dd > p {
+	font-size: 36px;
+}
 
 /* 弹窗 */
 .Mask {
@@ -198,6 +220,7 @@ input {
 	top: 0;
 	left: 0;
 	background-color: rgba(0, 0, 0, 0.5);
+	display: none;
 }
 .Pop {
 	position: fixed;
@@ -209,8 +232,12 @@ input {
 	transform: scale(0, 0);
 	transition: transform 0.2s;
 	padding-bottom: 12px;
+	display: none;
 }
-.Pop > .title {
+.Pop:hover {
+	transform: scale(1, 1);
+}
+.Pop > h4 {
 	font-size: 16px;
 	height: 41px;
 	line-height: 41px;
@@ -225,11 +252,11 @@ input {
 	color: #eee;
 }
 .Pop > .button {
-	padding: 6px 24px 12px;
+	padding: 6px 18px 12px;
 	text-align: right;
 }
 .Pop > .button > button {
-	margin: 0px;
+	margin: 0 6px;
 }
 .Pop > .close {
 	position: absolute;
@@ -263,22 +290,25 @@ input {
 .Pop > .close:hover::before {
 	border-color: #fff;
 }
-.Pop input {
+.Pop input[type='text'],
+.Pop input[type='password'] {
 	height: 36px;
 	line-height: 36px;
-	border: 0;
 	width: 100%;
 	color: #333;
 	background-color: rgba(221, 221, 221, 0.8);
 }
 .Pop > .foot {
-	margin: 0 24px 6px;
+	padding: 0 24px 6px;
+	min-height: 24px;
 }
 .Pop.dialog > .body {
-	text-indent: 2em;
 	padding-top: 36px;
-	text-indent: 2em;
 	min-height: 92px;
+}
+.Pop.dialog > .body > .iconfont {
+	color: #ff0;
+	margin: 0 9px;
 }
 .Pop.tips {
 	width: 320px;
@@ -290,13 +320,21 @@ input {
 	padding: 10px 36px 0 15px;
 	text-indent: 0;
 }
+.Pop.login {
+	width: 380px;
+}
+.Pop.login > .button {
+	padding: 6px 24px 12px;
+}
 .Pop.login > .button > button.confirm {
 	display: block;
 	height: 36px;
 	line-height: 34px;
 	width: 100%;
+	margin: 0;
 }
-.Pop.login input {
+.Pop.login input[type='text'],
+.Pop.login input[type='password'] {
 	padding-left: 32px;
 }
 .Pop.login > .foot > i {
@@ -304,22 +342,56 @@ input {
 	color: #999;
 	cursor: pointer;
 	transition: color 0.2s;
-	margin-left: 9px;
+	float: left;
+}
+.Pop.login > .foot > i:last-child {
+	float: right;
 }
 .Pop.login > .foot > i:hover {
-	color: #ccc;
+	color: #08c;
+}
+.Pop label {
+	position: relative;
+	height: 60px;
+	display: block;
+	padding: 6px 0 38px;
+}
+.Pop label > .iconfont {
+	position: absolute;
+	left: 9px;
+	top: 12px;
+	color: #666;
+}
+.Pop label input.error {
+	border-color: #c00;
+}
+.Pop label .msg {
+	display: none;
+	font-size: 12px;
+	color: #c00;
+	vertical-align: middle;
+	line-height: 22px;
+}
+.Pop label .msg > .iconfont {
+	margin: 0 4px 0 2px;
+	font-size: 12px;
+	color: #c00;
+}
+/* loading */
+.Loading {
+	width: 28px;
+	height: 28px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background: url(bg/loading.svg) no-repeat;
 }
 
 /* IconFont */
 @font-face {
 	font-family: 'iconfont';
 	src: url('iconfont.woff') format('woff'), url('iconfont.ttf') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
-}
-
-@font-face {
-	font-family: 'iconfont'; /* project id 2168986 */
-	src: url('//at.alicdn.com/t/font_2168986_76wtnztc4ua.eot');
-	src: url('//at.alicdn.com/t/font_2168986_76wtnztc4ua.eot?#iefix') format('embedded-opentype'), url('//at.alicdn.com/t/font_2168986_76wtnztc4ua.woff2') format('woff2'), url('//at.alicdn.com/t/font_2168986_76wtnztc4ua.woff') format('woff'), url('//at.alicdn.com/t/font_2168986_76wtnztc4ua.ttf') format('truetype'), url('//at.alicdn.com/t/font_2168986_76wtnztc4ua.svg#iconfont') format('svg');
 }
 
 .iconfont {
@@ -335,17 +407,15 @@ input {
 	position: fixed;
 	top: 0;
 	left: 0;
-	z-index: 90;
+	z-index: 5;
 	height: 56px;
 	line-height: 56px;
 	width: 100%;
 	min-width: 1240px;
-	background: rgba(38, 38, 38, 0.9);
+	background: rgba(38, 38, 38, 0.98);
 	font-size: 16px;
-	box-shadow: 0 0 3px 2px rgba(0, 0, 0, 0.3);
+	box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
 	text-align: center;
-	/* display: flex;
-	justify-content: space-between; */
 }
 /* 进度条 */
 #header > .bar {
@@ -382,17 +452,19 @@ input {
 	height: 40px;
 	line-height: 40px;
 	padding: 0;
-	text-align: center;
 }
 #header > nav > .logo {
-	width: 86px;
-	height: 28px;
-	background-image: url(bg/logo.svg);
+	width: 110px;
+	height: 56px;
+	background: url(bg/logo.svg) no-repeat center;
+	background-size: 86px;
 	padding: 0;
-	margin: 14px 12px;
+	margin: 0;
+	transition: background-size 0.2s;
 }
 #header > nav > .logo:hover {
 	background-color: transparent;
+	background-size: 94px;
 }
 #header > form {
 	width: 32%;
@@ -429,13 +501,57 @@ input {
 	background: rgba(88, 88, 88, 0.5);
 }
 #header > .user {
-	float: right;
-	margin-right: 18px;
+	position: absolute;
+	top: 0;
+	right: 12px;
+	padding: 0 6px;
+	text-align: right;
+	width: 240px;
 }
+#header > .user > .face {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	background: rgba(1, 7, 33, 0.8);
+	cursor: pointer;
+	transition: border-color 0.2s, width 0.2s, height 0.2s, margin-right 0.2s;
+	position: relative;
+	top: 10px;
+	z-index: 1;
+}
+#header > .user > .face:hover {
+	border-color: rgba(255, 255, 255, 0.4);
+}
+#header > .user.over > .face {
+	width: 64px;
+	height: 64px;
+	border-color: rgba(255, 255, 255, 0.4);
+	margin-right: 81px;
+}
+
 #header > .user > button {
 	height: 34px;
 	line-height: 32px;
-	padding: 0 12px;
+}
+#header > .user > .info {
+	position: fixed;
+	top: 56px;
+	right: 12px;
+	width: 240px;
+	height: 360px;
+	background: rgba(38, 38, 38, 0.98);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 0 0 4px 4px;
+	border-top: 0;
+	height: 0;
+	opacity: 0;
+	box-shadow: 0 2px 2px 1px rgba(0, 0, 0, 0.3);
+	transition: opacity 0.3s, height 0.2s;
+}
+#header > .user.over > .info {
+	opacity: 1;
+	height: 300px;
 }
 
 /* 左侧固定导航 */
@@ -443,11 +559,12 @@ input {
 	position: fixed;
 	top: 56px;
 	left: 0;
-	z-index: 89;
+	z-index: 4;
 	padding: 6px 0;
 	width: 240px;
 	height: calc(100% - 56px);
-	background: rgba(38, 38, 38, 0.8);
+	background: rgba(38, 38, 38, 0.98);
+	box-shadow: 1px 2px 0 0 rgba(0, 0, 0, 0.2);
 	overflow-y: auto;
 	transition: left 0.3s;
 }
@@ -467,7 +584,7 @@ input {
 	background: #666;
 }
 #left > li {
-	border-top: 1px solid #383838;
+	border-top: 1px solid rgba(255, 255, 255, 0.1);
 	padding: 6px 0;
 	text-indent: 24px;
 	line-height: 36px;

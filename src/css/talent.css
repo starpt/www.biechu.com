@@ -93,7 +93,7 @@
 	padding: 2px;
 	vertical-align: middle;
 	position: relative;
-	top: -1px;
+	top: 1px;
 }
 #talent > li > h4 > .icon > img {
 	width: 18px;
@@ -107,7 +107,7 @@
 	left: 0;
 	width: 22px;
 	height: 22px;
-	background: url(bg/iconDefault.png);
+	background: url(bg/iconDefault.png) no-repeat 2px;
 	background-size: 22px;
 }
 #talent > li > h4 > .reset {

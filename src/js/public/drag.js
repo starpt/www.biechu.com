@@ -7,7 +7,7 @@
 !(function ($) {
 	let win = $(window)
 	$.fn.drag = function (margin, title) {
-		title = title || '.title'
+		title = title || 'h4'
 		let start = this.children(title)
 		let drag = this.css('position', 'fixed')
 		start = start.length ? start : drag

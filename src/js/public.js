@@ -99,9 +99,44 @@ $(document).ready(() => {
 $(window).on({
 	load: $.loading,
 	keydown: e => {
-		if (e.keyCode === 9) header.find('>nav>.iconfont').click()
+		if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON' && e.keyCode === 9 && $('.Pop:visible').length === 0) {
+			header.find('>nav>.iconfont').click()
+			return false
+		}
 	}
 })
+
+$.ajaxSetup({
+	type: 'POST',
+	beforeSend: xhr => {
+		let token = localStorage.getItem('token')
+		if (token) xhr.setRequestHeader('token', token)
+	},
+	complete: (res, text) => {
+		if (text === 'error') {
+			if (res.none) {
+				log(res.none)
+				if (res.next instanceof Function) res.next()
+			} else {
+				$.alert(res.msg || res.status + '错误，请稍候再试或与系统管理员联系！', res.next)
+			}
+		}
+	}
+})
+
+//读取cookie
+$.cookie = {
+	get: name => {
+		let arr = document.cookie.match(new RegExp('(^| )' + name + '=([^;]*)(;|$)'))
+		return arr ? arr[2] : ''
+	},
+	set: (name, value, expires, domain) => {
+		document.cookie = name + '=' + value + ';expires=' + (expires ? new Date(expires) : '') + ';domain=' + (domain || '') + ';path=/'
+	},
+	del: function (name) {
+		this.set(name, null, -1)
+	}
+}
 
 /************************************************
  * 2020-07-25
@@ -112,7 +147,7 @@ $(window).on({
 !(function ($) {
 	let win = $(window)
 	$.fn.drag = function (margin, title) {
-		title = title || '.title'
+		title = title || 'h4'
 		let start = this.children(title)
 		let drag = this.css('position', 'fixed')
 		start = start.length ? start : drag
@@ -162,8 +197,10 @@ $(window).on({
  * 弹窗对话框
  * @params config = {}
  * mask 是否有背景遮罩 1 点击不关闭 其它关闭
+ * show 是否自动显示
+ * tag: 弹窗框体属性 默认 div
+ * id 唯一标识
  * css 弹窗样式 tips, dialog 默认无
- * width 宽度
  * titel 标题提示
  * body 主要内容 html
  * button 底部按钮 [{css 样式, text文字, click 点击事件}]
@@ -173,80 +210,155 @@ $(window).on({
  */
 
 !(function ($) {
+	// 按键绑定
+	let win = $(window).on('keydown', e => {
+		// 回车
+		if (e.keyCode === 13 && e.target.className !== 'confirm') return false
+
+		// ESC
+		if (e.keyCode === 27) {
+			let main = $('body>.Mask:visible,body>.Pop:visible').eq(-1)
+			if (main.length) main.close()
+		}
+	})
+
+	// 关闭事件
+	$.fn.close = function () {
+		let self = this
+		self.animate({opacity: 0}, 400, () => {
+			self
+				.css({
+					transform: '',
+					opacity: '',
+					display: 'none'
+				})
+				.children('.Pop')
+				.css({transform: ''})
+			if (!self[0].id) this.remove()
+		})
+		return self
+	}
+
 	$.pop = function (config) {
 		config = config || {}
-		let close = () => {
-			if (pop) {
-				pop.animate({opacity: 0}, 400, () => {
-					pop.remove()
-					pop = null
-				})
+
+		// 显示
+		let show = () => {
+			main.css({
+				display: 'block',
+				zIndex: 9 + $('body>.Mask:visible,body>.Pop:visible').length
+			})
+			pop.css({display: 'block'})
+
+			if (config.title) {
+				let title = pop.children('h4')
+				if (title.length) {
+					if (title.html() != config.title) title.html(config.title)
+				} else {
+					$('<h4>' + config.title + '</h4>').appendTo(pop)
+				}
 			}
-			if (mask) {
-				mask.animate({opacity: 0}, 400, () => {
-					mask.remove()
-					mask = null
-				})
+
+			let body = pop.children('.body')
+			if (body.length) {
+				if (!config.id) body.html(config.body)
+			} else {
+				$('<div class="body"' + (config.title ? ' style="padding-top:18px"' : '') + '>' + (config.body || '') + '</div><i class="close"></i>').appendTo(pop)
 			}
-			win.off('keydown')
+
+			// 渲染按钮,并绑定事件
+			let button = pop.children('.button')
+			config.button = config.button || []
+			if (config.button.length) {
+				if (button.length === 0) button = $('<div class="button">').appendTo(pop)
+				if (button.html() === '' || !config.id) {
+					for (let i = 0; i < config.button.length; i++) {
+						$('<button' + (config.button[i].type ? ' type="' + config.button[i].type + '"' : '') + ' class="' + (config.button[i].css || '') + '">' + (config.button[i].text || '') + '</button>')
+							.appendTo(button)
+							.click(config.button[i].click)[0].close = () => main.close()
+					}
+				}
+			} else {
+				button.remove()
+			}
+
+			// 渲染底部
+			let foot = pop.children('.foot')
+			if (config.foot) {
+				if (foot.length === 0) foot = $('<div class="foot">').appendTo(pop)
+				if (foot.html() === '' || !config.id) foot.html(config.foot)
+			} else {
+				foot.remove()
+			}
+
+			// 关闭和取消事件绑定
+			pop
+				.find('.close')
+				.off('click')
+				.on('click', () => main.close())
+
+			// 确认按钮获得焦点
+			pop.find('>.button>.confirm:last').focus()
+
+			// 定时关闭
+			if (typeof config.delay === 'number')
+				setTimeout(() => {
+					main.close()
+				}, config.delay)
+
+			// 绑定拖动事件
+			if (config.drag) pop.drag()
+
+			// 自动居中
+			setTimeout(() => {
+				pop.css({
+					transform: 'scale(1,1)',
+					left: (win.width() - pop[0].offsetWidth) / 2,
+					top: (win.height() - pop[0].offsetHeight) / 3
+				})
+			}, 100)
+
+			return main
 		}
-		let mask = config.mask
-			? $('<div class="Mask">')
-					.css('zIndex', '9' + $('.Mask').length)
+
+		let main, mask, pop
+		if (config.id) main = $('#' + config.id)
+		if (main && main.length) {
+			if (config.mask) {
+				mask = main
+				pop = main.children('.Pop')
+			} else {
+				pop = main
+			}
+		} else {
+			if (config.mask) {
+				main = mask = $('<div' + (config.id ? ' id="' + config.id + '"' : ' ') + ' class="Mask">')
 					.appendTo('body')
 					.click(function (e) {
 						if (config.mask !== 1 && e.target === this) {
-							close()
+							$(this).close(!config.id)
 						}
 					})
-			: null
-
-		let pop = $('<div class="Pop' + (config.css ? ' ' + config.css : '') + '">')
-			.appendTo(mask || 'body')
-			.html((config.title ? '<h4 class="title">' + config.title + '</h4>' : '') + '<div class="body"' + (config.title ? ' style="padding-top:18px"' : '') + '>' + (config.body || '') + '</div>\
-			<i class="close"></i>')
-		if (!mask) pop.css('zIndex', '9' + $('.Pop').length)
-
-		config.button = config.button || []
-		if (config.button.length) {
-			let button = $('<div class="button">')
-			for (let i = 0; i < config.button.length; i++) {
-				$('<button class="' + (config.button[i].css || '') + '">' + (config.button[i].text || '') + '</button>')
-					.appendTo(button)
-					.click(config.button[i].click)[0].close = close
 			}
-			button.appendTo(pop).children('.confirm').focus()
+			pop = (config.tag ? $(config.tag) : $('<div>')).appendTo(mask || 'body').attr({
+				id: config.id && !config.mask ? config.id : null,
+				class: 'Pop' + (config.css ? ' ' + config.css : '')
+			})
+			main = mask || pop
 		}
+		if (config.show) show()
 
-		if (config.foot) {
-			$('<div class="foot">' + config.foot + '</div>').appendTo(pop)
-		}
-		pop.find('.close,.cancel').click(close)
-
-		let win = $(window).on('keydown', e => {
-			// 回车
-			if (e.keyCode === 13 && e.target.className !== 'confirm') return false
-
-			// ESC
-			if (e.keyCode === 27) close()
-		})
-		pop.css({
-			left: win.width() / 2 - pop.width() / 2,
-			top: win.height() / 3 - pop.height() / 3,
-			width: config.width,
-			transform: 'scale(1,1)'
-		})
-		if (config.drag) pop.drag()
-		if (typeof config.delay === 'number') {
-			setTimeout(close, config.delay)
-		}
-		return pop
+		// 绑定关闭事件
+		main.extend({close: main.close, show})
+		return main
 	}
-	$.alert = body => {
+
+	$.alert = (body, confirm) => {
 		$.pop({
 			css: 'dialog',
-			body,
+			body: '<i class="iconfont">&#xe630;</i>' + body,
 			mask: 1,
+			show: 1,
 			button: [
 				{
 					text: '确定',
@@ -256,72 +368,493 @@ $(window).on({
 					}
 				}
 			]
-		})
+		}).close = function () {
+			if (confirm instanceof Function) confirm()
+			if (this.hide instanceof Function) {
+				this.hide()
+			} else {
+				this.hide = this.close
+			}
+		}
 	}
 
-	$.confirm = (body, callback) => {
+	$.confirm = (body, confirm, cancel) => {
 		$.pop({
 			css: 'dialog',
-			body,
+			body: '<i class="iconfont">&#xe630;</i>' + body,
 			mask: 1,
+			show: 1,
 			button: [
 				{
 					text: '确定',
 					css: 'confirm',
 					click: function () {
-						if (callback instanceof Function) callback()
+						if (confirm instanceof Function) confirm()
 						this.close()
 					}
 				},
 				{
 					text: '取消',
-					css: 'cancel'
+					css: 'cancel',
+					click: function () {
+						this.close()
+					}
 				}
 			]
-		})
+		}).close = function () {
+			if (cancel instanceof Function) cancel()
+			if (this.hide instanceof Function) {
+				this.hide()
+			} else {
+				this.hide = this.close
+			}
+		}
 	}
 
 	$.tips = (body, delay) => {
 		$.pop({
+			id: 'tips',
 			css: 'tips',
 			body,
+			show: 1,
 			delay: delay || 3000
 		})
 	}
 })(window.$)
 
-!(function ($) {
-	let login = $.pop({
-		css: 'login',
-		title: '登录',
-		mask: 1,
-		drag: 1,
-		width: 360,
-		body: '<form action="/api/login" method="POST">\
-		<label>\
-		<input type="text" placeholder="用户名" autocomplete="off">\
-		<i class="iconfont">&#xeadd;</i>\
-		</label>\
-		<label>\
-		<input type="password" placeholder="密码">\
-		<i class="iconfont">&#xe77b;</i>\
-		</label>\
-		</form>',
-		foot: '<i style="margin:0">忘记密码</i>\
-		<i>忘记用户名</i>\
-		<i class="Fr">免费注册</i>',
-		button: [
-			{
-				text: '登录',
-				css: 'confirm',
-				click: function () {
-					this.close()
-				}
-			}
-		]
-	})
-})(window.$)
+/************************************************
+ * 2021-01-30
+ * gky@qq.com
+ * 用户信息
+ ************************************************/
 
-header.children('.user').click(() => {
-	login.show()
+$.user = callback => {
+	let user = $.cookie.get('user')
+	user = user ? JSON.parse(user) : {}
+
+	log(user)
+
+	//JSON.parse()
+	user = {
+		obj: header.children('.user'),
+		name: $.cookie.get('userName'),
+		// 登录
+		login: function () {
+			let pop = $.pop({
+				id: 'login',
+				css: 'login',
+				tag: '<form>',
+				title: '登录',
+				show: 1,
+				mask: 1,
+				drag: 1,
+				body: '<label>\
+						<input maxlength="32" \
+						type="text" \
+						placeholder="用户名/手机号码/邮箱地址" \
+						value="admin' + this.name + '"\
+						rules="regexp"\
+						regexp="^(1(3|5|6|7|8|9)\\d{9}$)|(^[\\w-]+@\\w[\\w-.]*.[a-zA-Z]{2,3}$)|(^[\u4e00-\u9fa5\uf900-\ufa2da-zA-Z][\u4e00-\u9fa5\uf900-\ufa2d\\w-]{0,15}$)">\
+						<i class="iconfont">&#xeadd;</i>\
+					</label>\
+					<label>\
+						<input rules="minlength" minlength=7 maxlength="32" type="password" placeholder="密码">\
+						<i class="iconfont">&#xe77b;</i>\
+					</label>',
+				foot: '<i>忘记密码</i>\
+							<i>免费注册</i>',
+				button: [
+					{
+						text: '登录',
+						css: 'confirm',
+						click: e => {
+							let frm = e.target.form
+							frm[0].value = frm[0].value.trim()
+							if (!$(frm).verify()) return false
+							let reset = () => {
+								e.target.disabled = false
+								e.target.innerHTML = '登录'
+							}
+							e.target.disabled = true
+							e.target.innerHTML = '正在登录...'
+							$.ajax({
+								url: '/api/user/login',
+								data: {
+									userName: frm[0].value,
+									password: MD5(frm[1].value)
+								},
+								success: res => {
+									if (res.code === 1) {
+										this.success(res)
+										//$.alert('登录成功!', reset)
+									} else if (res.code === 2) {
+										$.confirm(
+											res.msg + '，是否注册？',
+											() => {
+												reset()
+												this.register(frm[0].value).show()
+											},
+											() => reset()
+										)
+									} else if (res.code === 3) {
+										let cd = Math.ceil(res.cd) || 0,
+											tim
+										$.alert(res.msg, () => {
+											e.target.innerHTML = cd + ' 秒后再试...'
+											tim = setInterval(() => {
+												cd -= 1
+												if (cd > 0) {
+													e.target.innerHTML = cd + ' 秒后再试...'
+												} else {
+													clearInterval(tim)
+													reset()
+												}
+											}, 1000)
+											frm[1].value = ''
+											frm[1].focus()
+										})
+									} else if (res.code === 4) {
+										$.alert(res.msg, () => {
+											frm[1].value = ''
+											frm[1].focus()
+											reset()
+										})
+									} else {
+										$.alert(res.msg, reset)
+									}
+								},
+								error: err => {
+									//err.none = false // 出错禁止提示
+									err.next = reset
+								}
+							})
+
+							return false
+						}
+					}
+				]
+			})
+			//输入框回车提交
+			pop
+				.find('input:text,input:password')
+				.keydown(e => {
+					if (e.keyCode === 13) e.target.form[2].click()
+				})
+				.each((_, item) => {
+					if (item.value === '' || item.className === 'error') {
+						item.focus()
+						return false
+					}
+				})
+
+			pop.find('.foot>i').each((index, item) => {
+				item.onclick = () => {
+					if (index === 0) {
+						this.forget().show()
+					} else if (index === 1) {
+						this.register().show()
+					}
+				}
+			})
+			require('md5.min.js')
+			return pop
+		},
+		// 忘记密码
+		forget: function () {
+			let pop = $.pop({
+				id: 'forget',
+				css: 'login',
+				tag: '<form>',
+				title: '忘记密码',
+				show: 1,
+				mask: 1,
+				drag: 1,
+				width: 360,
+				body: '<label class="Verify">\
+					<input rules="regexp" maxlength="16" type="text" placeholder="用户名" regexp="^[\u4e00-\u9fa5\uf900-\ufa2da-zA-Z][\u4e00-\u9fa5\uf900-\ufa2d\\w-]{0,15}$">\
+					<i class="iconfont">&#xeadd;</i>\
+				</label>\
+				<label class="Verify">\
+					<input rules="regexp" maxlength="32" type="text" placeholder="邮箱地址" regexp="^[\\w-]+@\\w[\\w-.]*.[a-zA-Z]{2,3}$">\
+					<i class="iconfont">&#xe806;</i>\
+				</label>',
+				button: [
+					{
+						text: '发送验证码邮件',
+						css: 'confirm',
+						click: e => {
+							let frm = e.target.form
+							return false
+						}
+					}
+				]
+			})
+		},
+		register: function (name) {
+			let pop = $.pop({
+				id: 'register',
+				css: 'login',
+				tag: '<form>',
+				title: '注册用户',
+				mask: 1,
+				drag: 1,
+				width: 360,
+				body: '<label class="Verify">\
+					<input rules="regexp" maxlength="16" type="text" placeholder="用户名" regexp="^[\u4e00-\u9fa5\uf900-\ufa2da-zA-Z][\u4e00-\u9fa5\uf900-\ufa2d\\w-]{0,15}$">\
+					<i class="iconfont">&#xeadd;</i>\
+				</label>\
+				<label class="Verify">\
+					<input rules="regexp" maxlength="32" type="text" placeholder="邮箱地址" regexp="^[\\w-]+@\\w[\\w-.]*.[a-zA-Z]{2,3}$">\
+					<i class="iconfont">&#xe806;</i>\
+				</label>',
+				button: [
+					{
+						text: '发送验证码邮件',
+						css: 'confirm',
+						click: e => {
+							let frm = e.target.form
+							return false
+						}
+					}
+				]
+			})
+			return pop
+		},
+		success: function (res) {
+			$.cookie.set('user', JSON.stringify(res.data))
+			localStorage.setItem('token', res.token)
+			this.login().close()
+			$.tips('登录成功!')
+			if (callback instanceof Function) callback()
+			this.obj
+				.html('<img src="' + ($.cookie.get('userFace') || '/img/face.svg') + '" class="face"><div class="info">\
+			</div>')
+				.mouseover(() => {
+					clearTimeout(this.tim)
+					this.obj.addClass('over').children('.info').html('<p class="Loading"></p>')
+					// this.obj.addClass('over').children('.info').html('<img src="/css/bg/loading.svg" width="28px">')
+				})
+				.mouseout(() => {
+					this.tim = setTimeout(() => {
+						this.obj.removeClass('over')
+					}, 250)
+				})
+		},
+		error: function () {
+			this.obj.html('<button>登录/注册</button>').click(() => {
+				this.login()
+			})
+		}
+	}
+
+	if (user.id) {
+		user.success()
+	} else if (user.name && /^[0-9a-f]{32}$/.test(user.password)) {
+		user.login(callback)
+	} else {
+		//log(222)
+		user.error()
+		//user.pop().show()
+	}
+}
+$.user(function () {
+	//log(Date.now() - now)
 })
+// header.children('.user'),userId = $.cookie.get('userId'),info
+// if(userId){
+// 	user.html('<img src="' + ($.cookie.get('userFace') || '/img/null.png') + '" class="face">')
+// 	if (callback instanceof Function) callback()
+// }
+// userName = $.cookie.get('userName'),
+// password = $.cookie.get('password'),
+
+// let user = header.children('.user'),
+// userId = $.cookie.get('userId'),
+// userName = $.cookie.get('userName'),
+// password = $.cookie.get('password'),
+// login = callback => {
+// 	$.ajax({
+// 		type: 'post',
+// 		url: '/api/user/login',
+// 		data: {
+// 			userName,
+// 			password
+// 		},
+// 		success: res => {
+// 			callback(res)
+// 		},
+// 		error: err => {
+// 			user.html('<button>登录/注册</button>').click(() => {
+// 				$.login().show()
+// 			})
+// 		}
+// 	})
+// }
+
+// 	let login = callback => {
+// 		$.ajax({
+// 			type: 'post',
+// 			url: '/api/user/login',
+// 			data: {
+// 				userName,
+// 				password
+// 			},
+// 			success: res => {
+// 				callback(res)
+// 			},
+// 			error: err => {
+// 				user.html('<button>登录/注册</button>').click(() => {
+// 					$.login().show()
+// 				})
+// 			}
+// 		})
+// 	}
+// 	/* let pop = $.pop({
+// 		id: 'login',
+// 		css: 'login',
+// 		// show: 0,
+// 		title: '登录',
+// 		mask: 2,
+// 		drag: 1,
+// 		width: 360,
+// 		body: '<form action="/api/login" method="POST">\
+// 			<label>\
+// 			<input type="text" placeholder="用户名" autocomplete="off">\
+// 			<i class="iconfont">&#xeadd;</i>\
+// 			</label>\
+// 			<label>\
+// 			<input type="password" placeholder="密码">\
+// 			<i class="iconfont">&#xe77b;</i>\
+// 			</label>\
+// 			</form>',
+// 		foot: '<i style="margin:0">忘记密码</i>\
+// 			<i>忘记用户名</i>\
+// 			<i class="Fr">免费注册</i>',
+// 		button: [
+// 			{
+// 				text: '登录',
+// 				css: 'confirm',
+// 				click: function () {
+// 					login(() => {
+// 						if (callback instanceof Function) callback()
+// 						this.close()
+// 					})
+// 					this.close()
+// 				}
+// 			}
+// 		]
+// 	}) */
+
+// 	//log(pop.find('i'))
+// 	//return pop
+// }
+
+// let user = header.children('.user'),
+// 	userId = $.cookie.get('userId'),
+// 	userName = $.cookie.get('userName'),
+// 	password = $.cookie.get('password'),
+// 	login = callback => {
+// 		$.ajax({
+// 			type: 'post',
+// 			url: '/api/user/login',
+// 			data: {
+// 				userName,
+// 				password
+// 			},
+// 			success: res => {
+// 				callback(res)
+// 			},
+// 			error: err => {
+// 				user.html('<button>登录/注册</button>').click(() => {
+// 					$.login().show()
+// 				})
+// 			}
+// 		})
+// 	}
+
+// if (userId) {
+// 	user.html('<img src="' + ($.cookie.get('userFace') || '/img/null.png') + '" class="face">')
+// } else if (userName && password) {
+// 	login(userName,password)
+// 	// login(res => {
+// 	// 	//log(res)
+// 	// 	user.html('<button>登录/注册</button>').click(() => {
+// 	// 		$.login().show()
+// 	// 	})
+// 	// })
+// } else {
+// 	user.html('<button>登录/注册</button>').click(() => {
+// 		log($.login().show().find('i'))
+// 	})
+// }
+// })(window.$)
+
+/************************************************
+ * 2021-01-30
+ * gky@qq.com
+ * 表单校验
+ ************************************************/
+
+!(function ($) {
+	$.fn.verify = function (turn) {
+		let focus,
+			error = (item, msg, html) => {
+				if (!focus || turn) {
+					item.addClass('error')
+					msg.show().html('<i class="iconfont">&#xe630;</i>' + html + '!')
+				}
+				focus = focus ? focus : item
+			}
+		this.find('input[rules],select[rules],textarea[rules]').each((_, item) => {
+			let val = '',
+				tag = item.tagName,
+				type = item.type,
+				html = item.placeholder,
+				rules = item.getAttribute('rules')
+			if (tag === 'INPUT' && (type === 'radio' || type === 'checkbox')) {
+				this.find('input:' + type + ':checked[name=' + item.name + ']').each((_, i) => {
+					val = (val ? val + ',' : '') + i.value
+				})
+			} else {
+				val = item.value
+			}
+			item = $(item)
+				.off('input')
+				.on('input', e => {
+					e.target.className = ''
+					$(e.target).siblings('.msg').hide()
+				})
+			let msg = item.siblings('.msg')
+			msg = msg.length ? msg : $('<p class="msg">').appendTo(item.parent())
+			if (val === '') {
+				if (tag === 'SELECT' || (tag === 'INPUT' && (type === 'radio' || type == 'checkbox'))) {
+					html = '请选择' + html
+				} else {
+					html = '请输入' + html
+				}
+				error(item, msg, html)
+			} else {
+				if (!rules) return true
+				rules.split(',').forEach(rule => {
+					// 正则表达式
+					if (rule === 'regexp') {
+						if (!new RegExp(item.attr('regexp')).test(val)) {
+							error(item, msg, html + '不符合要求')
+						}
+						// 最小长度
+					} else if (rule === 'minlength') {
+						if (val.length < Number(item.attr('minlength'))) {
+							error(item, msg, html + '长度不能小于' + item.attr('minlength'))
+						}
+					}
+				})
+			}
+		})
+		if (focus) {
+			focus.focus()
+			return false
+		} else {
+			return true
+		}
+	}
+})(window.$)
